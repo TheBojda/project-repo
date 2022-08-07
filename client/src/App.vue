@@ -6,18 +6,18 @@
     <div class="collapse navbar-collapse" ref="navbar">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a id="howitworks-menu" class="nav-link" href="#">
-            <span data-localize="howitworks">How it works?</span>
+          <a class="nav-link" href="#">
+            How it works?
           </a>
         </li>
         <li class="nav-item">
-          <a id="whoweare-menu" class="nav-link" href="#">
-            <span data-localize="whoweare">Who we are?</span>
+          <a class="nav-link" href="#">
+            Who we are?
           </a>
         </li>
-        <li id="loginContainer" class="nav-item">
-          <a id="loginButton" class="nav-link loginButton" href="#">
-            <span data-localize="signup">Sign Up / Sign In</span>
+        <li class="nav-item">
+          <a class="nav-link loginButton" href="#">
+            Sign Up / Sign In
           </a>
         </li>
         <li id="userContainer" class="nav-item" style="display: none">
