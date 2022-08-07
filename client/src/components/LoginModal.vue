@@ -22,20 +22,18 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 import { Modal } from "bootstrap";
-import { FirebaseApp } from "firebase/app";
-import { getAuth, EmailAuthProvider, GoogleAuthProvider } from "firebase/auth";
+import { EmailAuthProvider, GoogleAuthProvider, Auth } from "firebase/auth";
 import * as firebaseui from "firebaseui";
 
 @Options({})
 export default class LoginModal extends Vue {
-  private modal: Modal = {} as Modal;
+  private modal?: Modal;
 
   mounted() {
     this.modal = new Modal(this.$refs.loginModal as Element);
   }
 
-  init(firebaseApp: FirebaseApp) {
-    let firebaseAuth = getAuth(firebaseApp);
+  init(firebaseAuth: Auth) {
     let ui = new firebaseui.auth.AuthUI(firebaseAuth);
     ui.start("#firebaseui-auth-container", {
       signInSuccessUrl: "http://localhost:8080/",
@@ -52,7 +50,7 @@ export default class LoginModal extends Vue {
   }
 
   show() {
-    this.modal.show();
+    this.modal?.show();
   }
 }
 </script>
