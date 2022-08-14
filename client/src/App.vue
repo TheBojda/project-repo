@@ -24,21 +24,26 @@ import TopNavigation from "./components/TopNavigation.vue";
 export default class App extends Vue {
   private firebaseAuth?: Auth;
 
+  private loginModal?: LoginModal;
+  private topNavigation?: TopNavigation;
+
   mounted() {
-    let firebaseApp = initializeApp(config.firebaseConfig);
-    this.firebaseAuth = getAuth(firebaseApp);
-    (this.$refs.loginModal as LoginModal).init(this.firebaseAuth);
+    this.loginModal = this.$refs.loginModal as LoginModal;
+    this.topNavigation = this.$refs.topNavigation as TopNavigation;
+
+    this.firebaseAuth = getAuth(initializeApp(config.firebaseConfig));
+    this.loginModal.init(this.firebaseAuth);
     this.firebaseAuth.onAuthStateChanged(async (user) => {
       if (user) {
-        (this.$refs.topNavigation as TopNavigation).setUser(user);
+        this.topNavigation?.setUser(user);
       } else {
-        (this.$refs.topNavigation as TopNavigation).setUser(null);
+        this.topNavigation?.setUser(null);
       }
     });
   }
 
   showLoginModal() {
-    (this.$refs.loginModal as LoginModal).show();
+    this.loginModal?.show();
   }
 
   logout() {
