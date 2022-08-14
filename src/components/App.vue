@@ -5,7 +5,9 @@
       @logout="logout"
       ref="topNavigation"
     />
-    <main role="main" class="container"></main>
+    <main role="main" class="container">
+      <component :is="path == '/' ? 'search-page' : 'project-page'"></component>
+    </main>
     <div class="footer"></div>
     <login-modal ref="loginModal" />
   </div>
@@ -13,21 +15,38 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
+import { useSSRContext } from "vue";
 import { initializeApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
+
+import { isBrowser } from "../utils/SSRUtils.js";
 import config from "../config.json";
+
+import SearchPage from "../pages/SearchPage.vue";
+import ProjectPage from "../pages/ProjectPage.vue";
 
 import LoginModal from "./LoginModal.vue";
 import TopNavigation from "./TopNavigation.vue";
 
 @Options({
-  components: { TopNavigation, LoginModal },
+  components: { SearchPage, ProjectPage, TopNavigation, LoginModal },
 })
 export default class App extends Vue {
+  public path = "";
+
   private firebaseAuth?: Auth;
 
   private loginModal?: LoginModal;
   private topNavigation?: TopNavigation;
+
+  created() {
+    if (!isBrowser()) {
+      const context = useSSRContext();
+      this.path = context?.path;
+    } else {
+      this.path = window.location.pathname;
+    }
+  }
 
   mounted() {
     this.loginModal = this.$refs.loginModal as LoginModal;
@@ -55,4 +74,13 @@ export default class App extends Vue {
 </script>
 
 <style>
+body {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  background-size: cover;
+  background-image: url("../../public/res/background.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
 </style>

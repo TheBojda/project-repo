@@ -19,11 +19,19 @@ app.use(express.static('public'))
 if (process.env.DEV_MODE)
     app.use(express.static('.'))
 
-app.get('/', async (req: Request, res: Response) => {
+async function renderContent(req: Request, res: Response, context: any) {
     const app = createSSRApp(App);
-    const app_content = await renderToString(app)
+    const app_content = await renderToString(app, { path: req.originalUrl, ...context })
     index_template.querySelector('#app')?.set_content(app_content);
     res.send(index_template.toString())
+}
+
+app.get('/', async (req: Request, res: Response) => {
+    renderContent(req, res, {});
+});
+
+app.get('/project/:id', async (req: Request, res: Response) => {
+    renderContent(req, res, {});
 });
 
 app.listen(port, () => {
