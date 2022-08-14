@@ -23,20 +23,23 @@
 import { Options, Vue } from "vue-class-component";
 import { Modal } from "bootstrap";
 import { EmailAuthProvider, GoogleAuthProvider, Auth } from "firebase/auth";
-import * as firebaseui from "firebaseui";
 
 @Options({})
 export default class LoginModal extends Vue {
   private modal?: Modal;
 
   mounted() {
-    this.modal = new Modal(this.$refs.loginModal as Element);
+    // bootstrap should be included only on browser side
+    const bootstrap = require("bootstrap");
+    this.modal = new bootstrap.Modal(this.$refs.loginModal as Element);
   }
 
   init(firebaseAuth: Auth) {
+    // firebaseui should be included only on browser side
+    const firebaseui = require("firebaseui");
     let ui = new firebaseui.auth.AuthUI(firebaseAuth);
     ui.start("#firebaseui-auth-container", {
-      signInSuccessUrl: "http://localhost:8080/",
+      signInSuccessUrl: "http://localhost:3000/",
       signInOptions: [
         {
           provider: EmailAuthProvider.PROVIDER_ID,

@@ -1,22 +1,24 @@
 <template>
-  <top-navigation
-    @showLoginModal="showLoginModal"
-    @logout="logout"
-    ref="topNavigation"
-  />
-  <main role="main" class="container"></main>
-  <div class="footer"></div>
-  <login-modal ref="loginModal" />
+  <div>
+    <top-navigation
+      @showLoginModal="showLoginModal"
+      @logout="logout"
+      ref="topNavigation"
+    />
+    <main role="main" class="container"></main>
+    <div class="footer"></div>
+    <login-modal ref="loginModal" />
+  </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 import { initializeApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
-import config from "./config.json";
+import config from "../config.json";
 
-import LoginModal from "./components/LoginModal.vue";
-import TopNavigation from "./components/TopNavigation.vue";
+import LoginModal from "./LoginModal.vue";
+import TopNavigation from "./TopNavigation.vue";
 
 @Options({
   components: { TopNavigation, LoginModal },
