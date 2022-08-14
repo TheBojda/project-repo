@@ -2,7 +2,7 @@ import { createConnection } from 'mysql2/promise';
 import fs from 'fs';
 
 import * as dotenv from 'dotenv'
-dotenv.config({debug:true, path: process.env.DOTENV_CONFIG_PATH})
+dotenv.config({ debug: true, path: process.env.DOTENV_CONFIG_PATH })
 
 const main = async () => {
     const connection = await createConnection({
