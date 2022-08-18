@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light bg-transparent">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <button class="navbar-toggler" type="button" @click="toggleNavbar">
       <span class="navbar-toggler-icon"></span>
     </button>

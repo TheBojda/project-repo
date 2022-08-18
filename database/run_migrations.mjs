@@ -1,5 +1,6 @@
 import { createConnection } from 'mysql2/promise';
 import fs from 'fs';
+import * as path from 'path';
 
 import * as dotenv from 'dotenv'
 dotenv.config({ debug: true, path: process.env.DOTENV_CONFIG_PATH })
@@ -14,18 +15,17 @@ const main = async () => {
 
     await connection.execute(`CREATE TABLE IF NOT EXISTS migrations (migration VARCHAR(255))`)
 
-    /*
-    const files = fs.readdirSync('./sql')
+    const files = fs.readdirSync(path.join(process.cwd(), './database/migrations'))
+    files.sort()
     for (const file of files) {
         const [rows, _] = await connection.execute("SELECT migration FROM migrations WHERE migration = ?", [file])
-        if ((<Array<any>>rows).length == 0) {
+        if (rows.length == 0) {
             console.log(`Running migration: ${file}`);
-            const content = fs.readFileSync(`./sql/${file}`, 'utf-8').toString()
+            const content = fs.readFileSync(path.join(process.cwd(), `./database/migrations/${file}`), 'utf-8').toString()
             await connection.execute(content);
             await connection.execute("INSERT INTO migrations VALUES (?)", [file]);
         }
     }
-    */
 
     connection.end();
 }

@@ -5,9 +5,7 @@
       @logout="logout"
       ref="topNavigation"
     />
-    <main role="main" class="container">
-      <component :is="path == '/' ? 'search-page' : 'project-page'"></component>
-    </main>
+    <component :is="path == '/' ? 'search-page' : 'project-page'"></component>
     <div class="footer"></div>
     <login-modal ref="loginModal" />
   </div>
@@ -78,9 +76,5 @@ body {
   width: 100%;
   height: 100%;
   min-height: 100%;
-  background-size: cover;
-  background-image: url("../../public/res/background.jpg");
-  background-repeat: no-repeat;
-  background-attachment: fixed;
 }
 </style>
