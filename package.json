@@ -23,7 +23,7 @@
     "migrations_run_dev": "DOTENV_CONFIG_PATH=env.development node database/run_migrations.mjs",
     "watch": "parcel watch",
     "build": "parcel build",
-    "dev": "concurrently --kill-others \"npm run watch\" \"DEV_MODE=true nodemon ./dist/server/main.js\""
+    "dev": "concurrently --kill-others \"npm run watch\" \"DOTENV_CONFIG_PATH=env.development DEV_MODE=true nodemon ./dist/server/main.js\""
   },
   "keywords": [],
   "author": "",
