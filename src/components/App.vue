@@ -5,7 +5,7 @@
       @logout="logout"
       ref="topNavigation"
     />
-    <component :is="path == '/' ? 'search-page' : 'project-page'"></component>
+    <component :is="getMainComponent()"></component>
     <div class="footer"></div>
     <login-modal ref="loginModal" />
   </div>
@@ -22,12 +22,19 @@ import config from "../config.json";
 
 import SearchPage from "../pages/SearchPage.vue";
 import ProjectPage from "../pages/ProjectPage.vue";
+import ProjectEditorPage from "../pages/ProjectEditorPage.vue";
 
 import LoginModal from "./LoginModal.vue";
 import TopNavigation from "./TopNavigation.vue";
 
 @Options({
-  components: { SearchPage, ProjectPage, TopNavigation, LoginModal },
+  components: {
+    SearchPage,
+    ProjectPage,
+    ProjectEditorPage,
+    TopNavigation,
+    LoginModal,
+  },
 })
 export default class App extends Vue {
   public path = "";
@@ -59,6 +66,12 @@ export default class App extends Vue {
         this.topNavigation?.setUser(null);
       }
     });
+  }
+
+  getMainComponent() {
+    if (this.path == "/") return SearchPage;
+    if (this.path.startsWith("/project/")) return ProjectPage;
+    if (this.path.startsWith("/project_editor")) return ProjectEditorPage;
   }
 
   showLoginModal() {

@@ -39,7 +39,7 @@ export default class LoginModal extends Vue {
     const firebaseui = require("firebaseui");
     let ui = new firebaseui.auth.AuthUI(firebaseAuth);
     ui.start("#firebaseui-auth-container", {
-      signInSuccessUrl: "http://localhost:3000/",
+      signInSuccessUrl: window.location.href,
       signInOptions: [
         {
           provider: EmailAuthProvider.PROVIDER_ID,
