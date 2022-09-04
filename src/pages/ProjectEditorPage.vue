@@ -8,7 +8,7 @@
             <input
               type="text"
               class="inline-editor"
-              placeholder="Project title (click here to modify)"
+              placeholder="Project title (click here to edit)"
             />
           </h1>
         </div>
@@ -20,7 +20,7 @@
             <textarea
               class="inline-editor"
               rows="2"
-              placeholder="Short description of the project (click here to modify)"
+              placeholder="Short description of the project (click here to edit)"
             ></textarea>
           </h2>
         </div>
@@ -29,7 +29,7 @@
             <textarea
               class="inline-editor"
               rows="2"
-              placeholder="Description of the project (click here to modify)"
+              placeholder="Optional description of the project (click here to edit)"
             ></textarea>
           </h2>
         </div>
