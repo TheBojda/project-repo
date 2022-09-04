@@ -15,6 +15,9 @@
           </h1>
         </div>
         <div class="mb-3">
+          <image-drop></image-drop>
+        </div>
+        <div class="mb-3">
           <h2>
             <label for="short_description" class="form-label"
               >Short description</label
@@ -33,11 +36,16 @@
             <textarea
               class="form-control"
               id="description"
-              rows="3"
+              rows="6"
               placeholder="Description of the project"
             ></textarea>
           </h2>
         </div>
+        <div class="mb-3">
+          <h2>Links</h2>
+          <link-editor></link-editor>
+        </div>
+        <category-selector></category-selector>
       </div>
     </div>
   </main>
@@ -45,7 +53,15 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
+import CategorySelector from "../components/CategorySelector.vue";
+import ImageDrop from "../components/ImageDrop.vue";
+import LinkEditor from "../components/LinkEditor.vue";
 
-@Options({})
+@Options({
+  components: { CategorySelector, ImageDrop, LinkEditor },
+})
 export default class ProjectEditorPage extends Vue {}
 </script>
+
+<style scoped>
+</style>

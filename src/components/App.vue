@@ -90,4 +90,9 @@ body {
   height: 100%;
   min-height: 100%;
 }
+a {
+  color: black;
+  text-decoration: none;
+  font-style: italic;
+}
 </style>
