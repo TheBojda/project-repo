@@ -11,14 +11,16 @@ import { Options, Vue } from "vue-class-component";
 @Options({})
 export default class CoordinateSelector extends Vue {
   mounted() {
-    var L = require("leaflet");
-
-    var map = L.map(this.$refs.map).setView([51.505, -0.09], 13);
-
+    const L = require("leaflet");
+    const map = L.map(this.$refs.map).setView([51.505, -0.09], 13);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+    resizeObserver.observe(this.$refs.map as Element);
   }
 }
 </script>

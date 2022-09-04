@@ -19,12 +19,7 @@
             categories, click here!
           </button>
         </div>
-        <div
-          id="categoryCollapse"
-          class="accordion-collapse collapse"
-          aria-labelledby="headingOne"
-          data-bs-parent="#accordionExample"
-        >
+        <div id="categoryCollapse" class="accordion-collapse collapse">
           <div class="accordion-body">
             <label for="categoryFilter" class="form-label"
               >Category filter</label

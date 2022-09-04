@@ -5,12 +5,10 @@
       <div class="col-lg-8">
         <div class="mb-3">
           <h1>
-            <label for="title" class="form-label">Project title</label>
             <input
               type="text"
-              class="form-control"
-              id="title"
-              placeholder="Example project title"
+              class="inline-editor"
+              placeholder="Project title (click here to modify)"
             />
           </h1>
         </div>
@@ -19,43 +17,55 @@
         </div>
         <div class="mb-3">
           <h2>
-            <label for="short_description" class="form-label"
-              >Short description</label
-            >
             <textarea
-              class="form-control"
-              id="short_description"
-              rows="3"
-              placeholder="Short description of the project"
+              class="inline-editor"
+              rows="2"
+              placeholder="Short description of the project (click here to modify)"
             ></textarea>
           </h2>
         </div>
         <div class="mb-3">
           <h2>
-            <label for="description" class="form-label"
-              >Description (optional)</label
-            >
             <textarea
-              class="form-control"
-              id="description"
-              rows="6"
-              placeholder="Description of the project"
+              class="inline-editor"
+              rows="2"
+              placeholder="Description of the project (click here to modify)"
             ></textarea>
           </h2>
         </div>
         <div class="mb-3">
-          <h2>
-            <label class="form-label">Position (optional)</label>
-          </h2>
-          <div style="width: 100%; height: 200px">
-            <coordinate-selector></coordinate-selector>
-          </div>
-        </div>
-        <div class="mb-3">
-          <h2>Links</h2>
           <link-editor></link-editor>
         </div>
+        <div class="accordion">
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#coordinateCollapse"
+                aria-expanded="false"
+              >
+                <strong
+                  >Set the geographical position of your project if it has.
+                  (optional)</strong
+                >
+                &nbsp; To set the position, click here!
+              </button>
+            </div>
+            <div id="coordinateCollapse" class="accordion-collapse collapse">
+              <div class="accordion-body">
+                <div style="width: 100%; height: 500px">
+                  <coordinate-selector></coordinate-selector>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <category-selector></category-selector>
+        <div class="mt-3">
+          <button class="btn btn-primary">Submit project to review</button>
+        </div>
       </div>
     </div>
   </main>
@@ -76,4 +86,9 @@ export default class ProjectEditorPage extends Vue {}
 </script>
 
 <style scoped>
+.inline-editor {
+  width: 100%;
+  border: none;
+  outline: none;
+}
 </style>
