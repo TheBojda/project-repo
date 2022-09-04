@@ -42,6 +42,7 @@
     "express": "^4.18.1",
     "firebase": "^9.9.2",
     "firebaseui": "^6.0.1",
+    "leaflet": "^1.8.0",
     "md5": "^2.3.0",
     "mysql2": "^2.3.3",
     "node-html-parser": "^5.4.2-0",

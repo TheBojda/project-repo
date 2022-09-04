@@ -32,7 +32,9 @@
         </div>
         <div class="mb-3">
           <h2>
-            <label for="description" class="form-label">Description</label>
+            <label for="description" class="form-label"
+              >Description (optional)</label
+            >
             <textarea
               class="form-control"
               id="description"
@@ -40,6 +42,14 @@
               placeholder="Description of the project"
             ></textarea>
           </h2>
+        </div>
+        <div class="mb-3">
+          <h2>
+            <label class="form-label">Position (optional)</label>
+          </h2>
+          <div style="width: 100%; height: 200px">
+            <coordinate-selector></coordinate-selector>
+          </div>
         </div>
         <div class="mb-3">
           <h2>Links</h2>
@@ -53,12 +63,14 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
+
 import CategorySelector from "../components/CategorySelector.vue";
 import ImageDrop from "../components/ImageDrop.vue";
 import LinkEditor from "../components/LinkEditor.vue";
+import CoordinateSelector from "../components/CoordinateSelector.vue";
 
 @Options({
-  components: { CategorySelector, ImageDrop, LinkEditor },
+  components: { CategorySelector, ImageDrop, LinkEditor, CoordinateSelector },
 })
 export default class ProjectEditorPage extends Vue {}
 </script>
