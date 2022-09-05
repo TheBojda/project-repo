@@ -23,9 +23,14 @@ const pool = createPool({
     database: process.env.MYSQL_DATABASE
 });
 
+const index_template_ssr = parse(fs.readFileSync(path.join(__dirname, '../template.html')).toString())
+index_template_ssr.querySelector('body')?.appendChild(parse('<script src="/index_ssr.js"></script>'))
+index_template_ssr.querySelector('head')?.appendChild(parse('<link rel="stylesheet" href="/index.css">'))
+
 const index_template = parse(fs.readFileSync(path.join(__dirname, '../template.html')).toString())
 index_template.querySelector('body')?.appendChild(parse('<script src="/index.js"></script>'))
 index_template.querySelector('head')?.appendChild(parse('<link rel="stylesheet" href="/index.css">'))
+
 
 app.use(express.static('dist/client'))
 app.use(express.static('public'))
@@ -35,16 +40,18 @@ if (process.env.DEV_MODE)
 async function renderContent(req: Request, res: Response, context: any) {
     const app = createSSRApp(App);
     const app_content = await renderToString(app, { path: req.originalUrl, ...context })
-    index_template.querySelector('#app')?.set_content(app_content);
-    res.send(index_template.toString())
+    index_template_ssr.querySelector('#app')?.set_content(app_content);
+    res.send(index_template_ssr.toString())
 }
 
 app.get('/', async (req: Request, res: Response) => {
-    renderContent(req, res, {});
+    // renderContent(req, res, {});
+    res.send(index_template.toString())
 });
 
 app.get('/project_editor', async (req: Request, res: Response) => {
-    renderContent(req, res, {});
+    // renderContent(req, res, {});
+    res.send(index_template.toString())
 });
 
 app.get('/project/:slug', async (req: Request, res: Response) => {

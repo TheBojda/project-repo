@@ -63,7 +63,7 @@
           </div>
         </div>
         <category-selector></category-selector>
-        <div class="mt-3">
+        <div class="mt-3 mb-3">
           <button class="btn btn-primary">Submit project to review</button>
         </div>
       </div>

@@ -69,5 +69,9 @@ export default class SearchPage extends Vue {}
 </script>
 
 <style scoped>
-
+a {
+  color: black;
+  text-decoration: none;
+  font-style: italic;
+}
 </style>

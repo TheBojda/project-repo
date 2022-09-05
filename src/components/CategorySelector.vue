@@ -31,8 +31,12 @@
               placeholder="Start typing to filter categories!"
             />
             <div style="height: 1rem"></div>
-            <span class="badge bg-secondary tag-badge">Makerspace</span>
-            <span class="badge bg-secondary tag-badge">Community project</span>
+            <span
+              class="badge bg-secondary tag-badge"
+              v-for="(value, key) in categories"
+              :key="key"
+              >{{ value }}</span
+            >
           </div>
         </div>
       </div>
@@ -44,7 +48,17 @@
 import { Options, Vue } from "vue-class-component";
 
 @Options({})
-export default class CategorySelector extends Vue {}
+export default class CategorySelector extends Vue {
+  public categories = {};
+
+  mounted() {
+    this.init();
+  }
+
+  async init() {
+    this.categories = await (await fetch("config/categories.json")).json();
+  }
+}
 </script>
 
 <style scoped>

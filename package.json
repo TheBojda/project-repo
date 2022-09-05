@@ -5,10 +5,12 @@
   "targets": {
     "client": {
       "source": [
-        "./src/client/index.ts"
+        "./src/client/index.ts",
+        "./src/client/index_ssr.ts"
       ],
       "distDir": "./dist/client",
       "context": "browser"
+      
     },
     "server": {
       "source": "./src/server/main.ts",
@@ -32,7 +34,9 @@
     "@parcel/transformer-vue": "^2.7.0",
     "concurrently": "^7.3.0",
     "nodemon": "^2.0.19",
-    "parcel": "^2.7.0"
+    "parcel": "^2.7.0",
+    "typescript": "^4.8.2",
+    "vue-template-compiler": "^2.7.10"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.2.0",

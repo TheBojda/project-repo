@@ -1,15 +1,17 @@
 <template>
   <div>
-    <div class="row mb-2 link-line" v-for="(link, idx) in links" :key="idx">
-      <div class="col">
-        <i class="link-icon" :class="getIcon(link.url)"></i>
-        {{ link.description }} -
-        <a :href="link.url" target="_blank">{{ link.url }}</a>
-      </div>
-      <div class="col-sm-2">
-        <button class="btn btn-danger" @click="removeLink(idx)">
-          Remove link
-        </button>
+    <div>
+      <div class="row mb-2 link-line" v-for="(link, idx) in links" :key="idx">
+        <div class="col">
+          <i class="link-icon" :class="getIcon(link.url)"></i>
+          {{ link.description }} -
+          <a :href="link.url" target="_blank">{{ link.url }}</a>
+        </div>
+        <div class="col-sm-2">
+          <button class="btn btn-danger" @click="removeLink(idx)">
+            Remove link
+          </button>
+        </div>
       </div>
     </div>
     <div class="row">
@@ -80,5 +82,10 @@ export default class LinkEditor extends Vue {
 }
 .link-icon {
   color: #08c;
+}
+a {
+  color: black;
+  text-decoration: none;
+  font-style: italic;
 }
 </style>

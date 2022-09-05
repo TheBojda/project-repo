@@ -1,9 +1,9 @@
 import {} from './base'
 
-import { createApp } from 'vue'
+import { createSSRApp } from 'vue'
 import App from '../components/App.vue'
 
 globalThis.__VUE_OPTIONS_API__ = true
 globalThis.__VUE_PROD_DEVTOOLS__ = true;
 
-createApp(App).mount('#app')
+createSSRApp(App).mount('#app')
