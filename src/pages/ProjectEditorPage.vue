@@ -36,7 +36,8 @@
         <div class="mb-3">
           <link-editor></link-editor>
         </div>
-        <div class="accordion">
+        <category-selector></category-selector>
+        <div class="accordion mt-3">
           <div class="accordion-item">
             <div class="accordion-header">
               <button
@@ -46,23 +47,27 @@
                 data-bs-target="#coordinateCollapse"
                 aria-expanded="false"
               >
-                <strong
-                  >Set the geographical position of your project if it has.
-                  (optional)</strong
-                >
+                <strong v-if="!coords.lat && !coords.lng">
+                  Set the geographical position of your project if it has.
+                  (optional)
+                </strong>
+                <strong v-if="coords.lat && coords.lng">
+                  Position: {{ coords.lat }}, {{ coords.lng }}
+                </strong>
                 &nbsp; To set the position, click here!
               </button>
             </div>
             <div id="coordinateCollapse" class="accordion-collapse collapse">
               <div class="accordion-body">
                 <div style="width: 100%; height: 500px">
-                  <coordinate-selector></coordinate-selector>
+                  <coordinate-selector
+                    @coordsChanged="coordsChanged"
+                  ></coordinate-selector>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <category-selector></category-selector>
         <div class="mt-3 mb-3">
           <button class="btn btn-primary">Submit project to review</button>
         </div>
@@ -82,7 +87,14 @@ import CoordinateSelector from "../components/CoordinateSelector.vue";
 @Options({
   components: { CategorySelector, ImageDrop, LinkEditor, CoordinateSelector },
 })
-export default class ProjectEditorPage extends Vue {}
+export default class ProjectEditorPage extends Vue {
+  public coords: any = {};
+
+  coordsChanged(coords) {
+    this.coords = coords;
+    console.log(coords);
+  }
+}
 </script>
 
 <style scoped>

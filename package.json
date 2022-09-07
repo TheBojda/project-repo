@@ -4,10 +4,13 @@
   "private": true,
   "targets": {
     "client": {
-      "source": [
-        "./src/client/index.ts",
-        "./src/client/index_ssr.ts"
-      ],
+      "source": "./src/client/index.ts",
+      "distDir": "./dist/client",
+      "context": "browser"
+      
+    },
+    "client_ssr": {
+      "source": "./src/client/index_ssr.ts",
       "distDir": "./dist/client",
       "context": "browser"
       

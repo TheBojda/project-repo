@@ -1,8 +1,13 @@
 <template>
   <div>
-    <div style="margin-top: 1rem; display: none">
-      <span class="badge bg-primary tag-badge">Makerspace</span>
-      <span class="badge bg-primary tag-badge">Community project</span>
+    <div style="margin-top: 1rem">
+      <span
+        class="badge bg-primary tag-badge"
+        v-for="key in selectedCategories"
+        :key="key"
+        @click="removeCategory(key)"
+        >{{ categories[key] }}</span
+      >
     </div>
     <div style="height: 1rem"></div>
     <div class="accordion">
@@ -15,7 +20,7 @@
             data-bs-target="#categoryCollapse"
             aria-expanded="false"
           >
-            <strong>Choose minimum 1 category.</strong> &nbsp; To select
+            <strong v-if="selectedCategories.length == 0">Choose minimum 1 category.</strong> &nbsp; To select
             categories, click here!
           </button>
         </div>
@@ -35,6 +40,7 @@
               class="badge bg-secondary tag-badge"
               v-for="(value, key) in categories"
               :key="key"
+              @click="selectCategory(key)"
               >{{ value }}</span
             >
           </div>
@@ -50,6 +56,7 @@ import { Options, Vue } from "vue-class-component";
 @Options({})
 export default class CategorySelector extends Vue {
   public categories = {};
+  public selectedCategories: string[] = [];
 
   mounted() {
     this.init();
@@ -57,6 +64,15 @@ export default class CategorySelector extends Vue {
 
   async init() {
     this.categories = await (await fetch("config/categories.json")).json();
+  }
+
+  selectCategory(key) {
+    if (this.selectedCategories.indexOf(key) != -1) return;
+    this.selectedCategories.push(key);
+  }
+
+  removeCategory(key) {
+    this.selectedCategories.splice(this.selectedCategories.indexOf(key), 1);
   }
 }
 </script>
