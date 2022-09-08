@@ -1,21 +1,55 @@
 <template>
-  <div style="width: 100%; height: 100%">
-    <small
-      >Click on the map to select a position (<a href="#" @click="clearPosition"
-        >clear position</a
-      >)</small
-    >
-    <div ref="map" style="width: 100%; height: 90%"></div>
+  <div>
+    <div class="mb-3 mt-3" v-if="coords.lat && coords.lng">
+      <strong>Position: {{ coords.lat }}, {{ coords.lng }}</strong>
+    </div>
+    <div class="accordion mt-3">
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#coordinateCollapse"
+            aria-expanded="false"
+          >
+            <strong v-if="!coords.lat && !coords.lng">
+              Set the geographical position of your project if it has.
+              (optional)
+            </strong>
+            &nbsp; To set the position, click here!
+          </button>
+        </div>
+        <div id="coordinateCollapse" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            <div style="width: 100%; height: 500px">
+              <div style="width: 100%; height: 100%">
+                <small
+                  >Click on the map to select a position (<a
+                    href="#"
+                    @click="clearPosition"
+                    >clear position</a
+                  >)</small
+                >
+                <div ref="map" style="width: 100%; height: 90%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 
-@Options({})
+@Options({ props: ["modelValue"] })
 export default class CoordinateSelector extends Vue {
   private marker: any;
   private map: any;
+
+  public coords: any = {};
 
   mounted() {
     const L = require("leaflet");
@@ -37,7 +71,8 @@ export default class CoordinateSelector extends Vue {
       } else {
         this.marker.setLatLng(latlng);
       }
-      this.$emit("coordsChanged", latlng);
+      this.coords = latlng;
+      this.$emit("update:modelValue", this.coords);
     });
 
     if (navigator.geolocation) {
@@ -50,7 +85,8 @@ export default class CoordinateSelector extends Vue {
   clearPosition() {
     this.map.removeLayer(this.marker);
     this.marker = undefined;
-    this.$emit("coordsChanged", {});
+    this.coords = {};
+    this.$emit("update:modelValue", this.coords);
   }
 }
 </script>

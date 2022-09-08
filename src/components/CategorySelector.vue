@@ -55,9 +55,7 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 
-@Options({
-  props: ["modelValue"],
-})
+@Options({ props: ["modelValue"] })
 export default class CategorySelector extends Vue {
   public categories = {};
   public selectedCategories: string[] = [];
@@ -83,12 +81,12 @@ export default class CategorySelector extends Vue {
   selectCategory(key) {
     if (this.selectedCategories.indexOf(key) != -1) return;
     this.selectedCategories.push(key);
-    this.$emit("update:modelValue", this.selectedCategories)
+    this.$emit("update:modelValue", this.selectedCategories);
   }
 
   removeCategory(key) {
     this.selectedCategories.splice(this.selectedCategories.indexOf(key), 1);
-    this.$emit("update:modelValue", this.selectedCategories)
+    this.$emit("update:modelValue", this.selectedCategories);
   }
 }
 </script>

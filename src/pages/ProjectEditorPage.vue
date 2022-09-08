@@ -43,43 +43,13 @@
           </h2>
         </div>
         <div class="mb-3">
-          <link-editor></link-editor>
+          <link-editor v-model="links"></link-editor>
         </div>
         <category-selector v-model="categories"></category-selector>
         <small class="red" v-if="errors.includes('req_category')"
           >Choose minimum 1 category</small
         >
-        <div class="mb-3 mt-3" v-if="coords.lat && coords.lng">
-          <strong>Position: {{ coords.lat }}, {{ coords.lng }}</strong>
-        </div>
-        <div class="accordion mt-3">
-          <div class="accordion-item">
-            <div class="accordion-header">
-              <button
-                class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#coordinateCollapse"
-                aria-expanded="false"
-              >
-                <strong v-if="!coords.lat && !coords.lng">
-                  Set the geographical position of your project if it has.
-                  (optional)
-                </strong>
-                &nbsp; To set the position, click here!
-              </button>
-            </div>
-            <div id="coordinateCollapse" class="accordion-collapse collapse">
-              <div class="accordion-body">
-                <div style="width: 100%; height: 500px">
-                  <coordinate-selector
-                    @coordsChanged="coordsChanged"
-                  ></coordinate-selector>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <coordinate-selector v-model="coords"></coordinate-selector>
         <div class="mt-3 mb-3">
           <button class="btn btn-primary" @click="submitProject">
             Submit project to review
@@ -103,21 +73,22 @@ import CoordinateSelector from "../components/CoordinateSelector.vue";
 })
 export default class ProjectEditorPage extends Vue {
   public errors: string[] = [];
-  public coords: any = {};
 
   public title = "";
   public short_description = "";
   public description = "";
-  public categories: string[] = ["makerspace"];
-
-  coordsChanged(coords) {
-    this.coords = coords;
-    console.log(coords);
-  }
+  public categories: string[] = [];
+  public coords: any = {};
+  public links = [];
 
   submitProject() {
     this.errors = [];
-    console.log(this.categories);
+    //console.log(this.categories);
+    //console.log(this.coords);
+    //console.log(this.links);
+    if (this.title == "") this.errors.push("req_title");
+    if (this.short_description == "") this.errors.push("req_short_desc");
+    if (this.categories.length == 0) this.errors.push("req_category");
   }
 }
 </script>

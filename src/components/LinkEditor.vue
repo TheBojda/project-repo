@@ -48,7 +48,7 @@ class Link {
   public description = "";
 }
 
-@Options({})
+@Options({ props: ["modelValue"] })
 export default class LinkEditor extends Vue {
   public url = "";
   public description = "";
@@ -61,10 +61,12 @@ export default class LinkEditor extends Vue {
     this.links.push(link);
     this.url = "";
     this.description = "";
+    this.$emit("update:modelValue", this.links);
   }
 
   removeLink(idx) {
     this.links.splice(idx, 1);
+    this.$emit("update:modelValue", this.links);
   }
 
   getIcon(url) {
