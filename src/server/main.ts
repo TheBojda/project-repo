@@ -45,12 +45,10 @@ async function renderContent(req: Request, res: Response, context: any) {
 }
 
 app.get('/', async (req: Request, res: Response) => {
-    // renderContent(req, res, {});
     res.send(index_template.toString())
 });
 
 app.get('/project_editor', async (req: Request, res: Response) => {
-    // renderContent(req, res, {});
     res.send(index_template.toString())
 });
 

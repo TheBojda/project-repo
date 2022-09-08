@@ -17,7 +17,7 @@
           >
         </div>
         <div class="mb-3">
-          <image-drop></image-drop>
+          <image-drop v-model="image"></image-drop>
         </div>
         <div class="mb-3">
           <h2>
@@ -80,15 +80,24 @@ export default class ProjectEditorPage extends Vue {
   public categories: string[] = [];
   public coords: any = {};
   public links = [];
+  public image = "";
 
   submitProject() {
     this.errors = [];
-    //console.log(this.categories);
-    //console.log(this.coords);
-    //console.log(this.links);
     if (this.title == "") this.errors.push("req_title");
     if (this.short_description == "") this.errors.push("req_short_desc");
     if (this.categories.length == 0) this.errors.push("req_category");
+    console.log(
+      JSON.stringify({
+        title: this.title,
+        short_description: this.short_description,
+        description: this.description,
+        links: this.links,
+        categories: this.categories,
+        coords: this.coords,
+        image: this.image,
+      })
+    );
   }
 }
 </script>

@@ -1,6 +1,11 @@
 <template>
   <div>
-    <img  :src="previewSrc" class="rounded preview" @drop.prevent="onDrop" v-show="previewSrc" />
+    <img
+      :src="previewSrc"
+      class="rounded preview"
+      @drop.prevent="onDrop"
+      v-show="previewSrc"
+    />
     <div class="image_drop" @drop.prevent="onDrop" v-show="!previewSrc">
       <span class="image_drop_text">Drop a project image here!</span>
     </div>
@@ -16,7 +21,7 @@ function preventDefaults(e) {
   e.preventDefault();
 }
 
-@Options({})
+@Options({ props: ["modelValue"] })
 export default class ImageDrop extends Vue {
   public previewSrc = "";
 
@@ -36,7 +41,14 @@ export default class ImageDrop extends Vue {
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
-      this.previewSrc = URL.createObjectURL(file);
+
+      let fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        let result = fileReader.result as string;
+        this.previewSrc = result;
+        this.$emit("update:modelValue", result);
+      });
+      fileReader.readAsDataURL(file);
     }
   }
 }
