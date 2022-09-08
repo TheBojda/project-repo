@@ -20,8 +20,10 @@
             data-bs-target="#categoryCollapse"
             aria-expanded="false"
           >
-            <strong v-if="selectedCategories.length == 0">Choose minimum 1 category.</strong> &nbsp; To select
-            categories, click here!
+            <strong v-if="selectedCategories.length == 0"
+              >Choose minimum 1 category.</strong
+            >
+            &nbsp; To select categories, click here!
           </button>
         </div>
         <div id="categoryCollapse" class="accordion-collapse collapse">
@@ -53,10 +55,22 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 
-@Options({})
+@Options({
+  props: ["modelValue"],
+})
 export default class CategorySelector extends Vue {
   public categories = {};
   public selectedCategories: string[] = [];
+
+  created() {
+    this.$watch(
+      "modelValue",
+      (val) => {
+        this.selectedCategories = val;
+      },
+      { immediate: true }
+    );
+  }
 
   mounted() {
     this.init();
@@ -69,10 +83,12 @@ export default class CategorySelector extends Vue {
   selectCategory(key) {
     if (this.selectedCategories.indexOf(key) != -1) return;
     this.selectedCategories.push(key);
+    this.$emit("update:modelValue", this.selectedCategories)
   }
 
   removeCategory(key) {
     this.selectedCategories.splice(this.selectedCategories.indexOf(key), 1);
+    this.$emit("update:modelValue", this.selectedCategories)
   }
 }
 </script>
