@@ -74,6 +74,8 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 
+import { callApi } from "../utils/api_utils";
+
 import CategorySelector from "../components/CategorySelector.vue";
 import ImageDrop from "../components/ImageDrop.vue";
 import LinkEditor from "../components/LinkEditor.vue";
@@ -119,27 +121,19 @@ export default class ProjectEditorPage extends Vue {
 
     const userToken = await user.getIdToken(true);
 
-    const response = await (
-      await fetch("/api/submitDraft", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userToken: userToken,
-          captchaToken: captchaToken,
-          content: {
-            title: this.title,
-            short_description: this.short_description,
-            description: this.description,
-            links: this.links,
-            categories: this.categories,
-            coords: this.coords,
-            image: this.image,
-          },
-        }),
-      })
-    ).json();
+    const response = await callApi("/api/submitDraft", {
+      userToken: userToken,
+      captchaToken: captchaToken,
+      content: {
+        title: this.title,
+        short_description: this.short_description,
+        description: this.description,
+        links: this.links,
+        categories: this.categories,
+        coords: this.coords,
+        image: this.image,
+      },
+    });
 
     console.log(response);
     (this.$refs.responseModal as ModalDialog).show();

@@ -16,7 +16,14 @@
           </td>
           <td>{{ draft.content.title }}</td>
           <td class="col-3">
-            <button type="button" class="btn btn-dark mx-1">Preview</button>
+            <a
+              type="button"
+              class="btn btn-dark mx-1"
+              :href="'/preview?draftId=' + draft.id"
+              target="_blank"
+            >
+              Preview
+            </a>
             <button type="button" class="btn btn-success mx-1">Accept</button>
             <button type="button" class="btn btn-danger mx-1">Reject</button>
           </td>
@@ -29,6 +36,8 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
+
+import { callApi } from "../utils/api_utils";
 
 import App from "../components/App.vue";
 
@@ -44,19 +53,9 @@ export default class DraftsPage extends Vue {
     const user = await (this.$root as App).getCurrentUser();
     if (!user) return;
     const userToken = await user.getIdToken(true);
-    const response = await (
-      await fetch("/api/getDrafts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userToken: userToken,
-        }),
-      })
-    ).json();
-    console.log(response);
-    this.drafts = response;
+    this.drafts = await callApi("/api/getDrafts", {
+      userToken: userToken,
+    });
   }
 }
 </script>

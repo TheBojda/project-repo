@@ -3,9 +3,9 @@
     <div style="padding-top: 1rem" class="d-none d-lg-block"></div>
     <div class="row justify-content-md-center">
       <div class="col-lg-8">
-        <h1 class="text-center">{{ title }}</h1>
-        <h2>{{ short_description }}</h2>
-        <span>{{ description }}</span>
+        <h1 class="text-center">{{ content.title }}</h1>
+        <h2>{{ content.short_description }}</h2>
+        <span>{{ content.description }}</span>
       </div>
     </div>
   </main>
@@ -14,20 +14,46 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 import { useSSRContext } from "vue";
-import { isBrowser } from "../utils/SSRUtils.js";
+import { isBrowser } from "../utils/ssr_utils";
+
+import { callApi } from "../utils/api_utils";
+
+import App from "../components/App.vue";
 
 @Options({})
 export default class ProjectPage extends Vue {
-  public title: string = "";
-  public short_description: string = "";
-  public description: string = "";
+  public content = {
+    title: "",
+    short_description: "",
+    description: "",
+  };
 
   created() {
     if (!isBrowser()) {
       const context = useSSRContext();
-      this.title = context?.title;
-      this.short_description = context?.short_description;
-      this.description = context?.description;
+      this.content.title = context?.title;
+      this.content.short_description = context?.short_description;
+      this.content.description = context?.description;
+    }
+  }
+
+  mounted() {
+    this.init();
+  }
+
+  async init() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("draftId")) {
+      const user = await (this.$root as App).getCurrentUser();
+      if (!user) return;
+      const draftId = params.get("draftId");
+      const userToken = await user.getIdToken(true);
+      const draft = await callApi("/api/getDraft", {
+        userToken: userToken,
+        id: draftId,
+      });
+      console.log(draft);
+      this.content = draft.content;
     }
   }
 }

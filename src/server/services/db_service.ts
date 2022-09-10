@@ -31,16 +31,25 @@ export async function createDraft(content: string, email: string | null, slug: s
 export async function getDrafts(email: string) {
     let rows
     if (email) {
-        [rows] = await runQuery("SELECT content, md5(email) as avatar_hash, created FROM drafts WHERE email = ? ORDER BY created ASC", [email])
+        [rows] = await runQuery("SELECT id, content, md5(email) as avatar_hash, created FROM drafts WHERE email = ? ORDER BY created ASC", [email])
     } else {
-        [rows] = await runQuery("SELECT content, md5(email) as avatar_hash, created FROM drafts ORDER BY created ASC")
+        [rows] = await runQuery("SELECT id, content, md5(email) as avatar_hash, created FROM drafts ORDER BY created ASC")
     }
     let result: any[] = []
     for (const row of rows) {
         result.push({
+            id: row.id,
             content: JSON.parse(row.content),
             avatar_hash: row.avatar_hash
         })
     }
     return result
+}
+
+export async function getDraft(id: number) {
+    const [rows, _] = await runQuery("SELECT content, email FROM drafts WHERE id = ?", [id])
+    return {
+        content: JSON.parse(rows[0].content),
+        email: rows[0].email
+    }
 }
