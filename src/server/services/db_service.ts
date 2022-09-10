@@ -53,3 +53,10 @@ export async function getDraft(id: number) {
         email: rows[0].email
     }
 }
+
+export async function getUserRole(email: string) {
+    const [rows, _] = await runQuery("SELECT role FROM users WHERE email = ?", [email])
+    if ((rows as []).length > 0)
+        return rows[0].role;
+    return "user";
+}

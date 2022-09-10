@@ -15,7 +15,7 @@
             />
           </td>
           <td>{{ draft.content.title }}</td>
-          <td class="col-3">
+          <td class="col-3 text-end">
             <a
               type="button"
               class="btn btn-dark mx-1"
@@ -24,8 +24,20 @@
             >
               Preview
             </a>
-            <button type="button" class="btn btn-success mx-1">Accept</button>
-            <button type="button" class="btn btn-danger mx-1">Reject</button>
+            <button
+              type="button"
+              class="btn btn-success mx-1"
+              v-if="role == 'admin'"
+            >
+              Accept
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger mx-1"
+              v-if="role == 'admin'"
+            >
+              Reject
+            </button>
           </td>
         </tr>
       </tbody>
@@ -44,6 +56,7 @@ import App from "../components/App.vue";
 @Options({})
 export default class DraftsPage extends Vue {
   public drafts: any[] = [];
+  public role = "user";
 
   mounted() {
     this.init();
@@ -53,9 +66,11 @@ export default class DraftsPage extends Vue {
     const user = await (this.$root as App).getCurrentUser();
     if (!user) return;
     const userToken = await user.getIdToken(true);
-    this.drafts = await callApi("/api/getDrafts", {
+    const response = await callApi("/api/getDrafts", {
       userToken: userToken,
     });
+    this.drafts = response.drafts;
+    this.role = response.role;
   }
 }
 </script>
