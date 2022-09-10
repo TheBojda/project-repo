@@ -3,7 +3,8 @@ import fs from 'fs';
 import * as path from 'path';
 
 import * as dotenv from 'dotenv'
-dotenv.config({ debug: true, path: process.env.DOTENV_CONFIG_PATH })
+if (process.env.DEV_MODE)
+    dotenv.config({ override: true, path: "env.development" })
 
 const main = async () => {
     const connection = await createConnection({

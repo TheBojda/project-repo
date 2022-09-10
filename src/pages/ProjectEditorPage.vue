@@ -57,6 +57,17 @@
         </div>
       </div>
     </div>
+    <modal-dialog ref="signinModal">
+      <template #title>Error dialog</template>
+      Please sign in before you submit your project!
+    </modal-dialog>
+    <modal-dialog ref="responseModal">
+      <template #title>Draft submission</template>
+      Draft is succesfully submited to review!
+      <template #footer>
+        <button class="btn btn-primary" @click="redirectHome">OK</button>
+      </template>
+    </modal-dialog>
   </main>
 </template>
 
@@ -67,9 +78,17 @@ import CategorySelector from "../components/CategorySelector.vue";
 import ImageDrop from "../components/ImageDrop.vue";
 import LinkEditor from "../components/LinkEditor.vue";
 import CoordinateSelector from "../components/CoordinateSelector.vue";
+import App from "../components/App.vue";
+import ModalDialog from "../components/ModalDialog.vue";
 
 @Options({
-  components: { CategorySelector, ImageDrop, LinkEditor, CoordinateSelector },
+  components: {
+    CategorySelector,
+    ImageDrop,
+    LinkEditor,
+    CoordinateSelector,
+    ModalDialog,
+  },
 })
 export default class ProjectEditorPage extends Vue {
   public errors: string[] = [];
@@ -82,22 +101,55 @@ export default class ProjectEditorPage extends Vue {
   public links = [];
   public image = "";
 
-  submitProject() {
+  async submitProject() {
     this.errors = [];
+    /*
     if (this.title == "") this.errors.push("req_title");
     if (this.short_description == "") this.errors.push("req_short_desc");
     if (this.categories.length == 0) this.errors.push("req_category");
-    console.log(
-      JSON.stringify({
-        title: this.title,
-        short_description: this.short_description,
-        description: this.description,
-        links: this.links,
-        categories: this.categories,
-        coords: this.coords,
-        image: this.image,
+    if(this.errors.length>0)
+    return;
+    */
+
+    const user = (this.$root as App).getCurrentUser();
+    if (!user) {
+      (this.$refs.signinModal as ModalDialog).show();
+      return;
+    }
+
+    await (this as any).$recaptchaLoaded();
+    const captchaToken = await (this as any).$recaptcha("login");
+
+    const userToken = await user.getIdToken(true);
+
+    const response = await (
+      await fetch("/api/submitDraft", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userToken: userToken,
+          captchaToken: captchaToken,
+          content: {
+            title: this.title,
+            short_description: this.short_description,
+            description: this.description,
+            links: this.links,
+            categories: this.categories,
+            coords: this.coords,
+            image: this.image,
+          },
+        }),
       })
-    );
+    ).json();
+
+    console.log(response);
+    (this.$refs.responseModal as ModalDialog).show();
+  }
+
+  async redirectHome() {
+    window.location.replace("/");
   }
 }
 </script>

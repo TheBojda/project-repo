@@ -15,7 +15,7 @@
 import { Options, Vue } from "vue-class-component";
 import { useSSRContext } from "vue";
 import { initializeApp } from "firebase/app";
-import { getAuth, Auth } from "firebase/auth";
+import { getAuth, Auth, User } from "firebase/auth";
 
 import { isBrowser } from "../utils/SSRUtils.js";
 import config from "../config.json";
@@ -80,6 +80,10 @@ export default class App extends Vue {
 
   logout() {
     this.firebaseAuth?.signOut();
+  }
+
+  getCurrentUser() {
+    return this.firebaseAuth?.currentUser;
   }
 }
 </script>

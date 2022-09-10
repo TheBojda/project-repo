@@ -3,3 +3,6 @@
 /dist/
 /yarn.lock
 /yarn-error.log
+/.env
+/package-lock.json
+/test-project-8440d-firebase-adminsdk-84fho-ee42c68719.json

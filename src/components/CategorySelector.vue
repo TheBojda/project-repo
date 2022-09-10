@@ -64,7 +64,7 @@ export default class CategorySelector extends Vue {
     this.$watch(
       "modelValue",
       (val) => {
-        this.selectedCategories = val;
+        this.selectedCategories = val ? val : [];
       },
       { immediate: true }
     );

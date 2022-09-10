@@ -6,4 +6,8 @@ import App from '../components/App.vue'
 globalThis.__VUE_OPTIONS_API__ = true
 globalThis.__VUE_PROD_DEVTOOLS__ = true;
 
-createApp(App).mount('#app')
+import { VueReCaptcha } from 'vue-recaptcha-v3'
+
+import config from "../config.json";
+
+createApp(App).use(VueReCaptcha, { siteKey: config.recaptchaSiteKey }).mount('#app')
