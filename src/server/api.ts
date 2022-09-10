@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 
 import { verifyCaptcha } from './services/recaptcha_service'
 import { verifyUser } from './services/firebase_service'
-import { createDraft } from './services/db_service'
+import { createDraft, getDrafts } from './services/db_service'
 
 const api = Router();
 
@@ -23,14 +23,25 @@ api.post('/submitDraft', jsonParser, async (req: Request, res: Response) => {
     }
 
     const user = await verifyUser(req.body.userToken)
-    if (!user) {
+    if (!user || !user.email) {
         res.send({ success: false, error: 'Invalid user token!' })
         return
     }
 
-    await createDraft(JSON.stringify(req.body.content), user.email || null, null)
+    await createDraft(JSON.stringify(req.body.content), user.email, null)
 
     res.send({ success: true })
+})
+
+api.post('/getDrafts', jsonParser, async (req: Request, res: Response) => {
+    const user = await verifyUser(req.body.userToken)
+    if (!user || !user.email) {
+        res.send({ success: false, error: 'Invalid user token!' })
+        return
+    }
+
+    const drafts = await getDrafts(user.email)
+    res.send(drafts)
 })
 
 export default api;

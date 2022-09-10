@@ -59,7 +59,7 @@
     </div>
     <modal-dialog ref="signinModal">
       <template #title>Error dialog</template>
-      Please sign in before you submit your project!
+      Please sign in before submit your project!
     </modal-dialog>
     <modal-dialog ref="responseModal">
       <template #title>Draft submission</template>
@@ -103,15 +103,12 @@ export default class ProjectEditorPage extends Vue {
 
   async submitProject() {
     this.errors = [];
-    /*
     if (this.title == "") this.errors.push("req_title");
     if (this.short_description == "") this.errors.push("req_short_desc");
     if (this.categories.length == 0) this.errors.push("req_category");
-    if(this.errors.length>0)
-    return;
-    */
+    if (this.errors.length > 0) return;
 
-    const user = (this.$root as App).getCurrentUser();
+    const user = await (this.$root as App).getCurrentUser();
     if (!user) {
       (this.$refs.signinModal as ModalDialog).show();
       return;

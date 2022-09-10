@@ -38,17 +38,19 @@ async function renderContent(req: Request, res: Response, context: any) {
     res.send(index_template_ssr.toString())
 }
 
-app.get('/', async (req: Request, res: Response) => {
+async function renderIndex(req: Request, res: Response) {
     res.send(index_template.toString())
-});
+}
 
-app.get('/project_editor', async (req: Request, res: Response) => {
-    res.send(index_template.toString())
-});
+app.get('/', renderIndex);
+app.get('/project_editor', renderIndex);
+app.get('/drafts', renderIndex);
+app.get('/preview', renderIndex);
 
 app.get('/project/:slug', async (req: Request, res: Response) => {
     const slug = req.params.slug
     const projectData = await getProjectDataBySlug(slug)
+    console.log(projectData)
     renderContent(req, res, { ...projectData });
 });
 

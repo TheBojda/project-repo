@@ -27,7 +27,8 @@
             />
           </a>
           <div class="dropdown-menu profileDropDown" ref="userMenu">
-            <a class="dropdown-item" href="profile/" target="_blank">Profile</a>
+            <a class="dropdown-item" href="/profile">Profile</a>
+            <a class="dropdown-item" href="/drafts">Drafts</a>
             <a class="dropdown-item" href="#" @click="logout">Log Off</a>
           </div>
         </li>

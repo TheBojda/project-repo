@@ -15,7 +15,7 @@
 import { Options, Vue } from "vue-class-component";
 import { useSSRContext } from "vue";
 import { initializeApp } from "firebase/app";
-import { getAuth, Auth, User } from "firebase/auth";
+import { getAuth, Auth, User, Unsubscribe } from "firebase/auth";
 
 import { isBrowser } from "../utils/SSRUtils.js";
 import config from "../config.json";
@@ -23,6 +23,7 @@ import config from "../config.json";
 import SearchPage from "../pages/SearchPage.vue";
 import ProjectPage from "../pages/ProjectPage.vue";
 import ProjectEditorPage from "../pages/ProjectEditorPage.vue";
+import DraftsPage from "../pages/DraftsPage.vue";
 
 import LoginModal from "./LoginModal.vue";
 import TopNavigation from "./TopNavigation.vue";
@@ -32,14 +33,13 @@ import TopNavigation from "./TopNavigation.vue";
     SearchPage,
     ProjectPage,
     ProjectEditorPage,
+    DraftsPage,
     TopNavigation,
     LoginModal,
   },
 })
 export default class App extends Vue {
   public path = "";
-
-  private firebaseAuth?: Auth;
 
   private loginModal?: LoginModal;
   private topNavigation?: TopNavigation;
@@ -57,9 +57,9 @@ export default class App extends Vue {
     this.loginModal = this.$refs.loginModal as LoginModal;
     this.topNavigation = this.$refs.topNavigation as TopNavigation;
 
-    this.firebaseAuth = getAuth(initializeApp(config.firebaseConfig));
-    this.loginModal.init(this.firebaseAuth);
-    this.firebaseAuth.onAuthStateChanged(async (user) => {
+    const firebaseAuth = getAuth(initializeApp(config.firebaseConfig));
+    this.loginModal.init(firebaseAuth);
+    firebaseAuth.onAuthStateChanged(async (user) => {
       if (user) {
         this.topNavigation?.setUser(user);
       } else {
@@ -72,6 +72,8 @@ export default class App extends Vue {
     if (this.path == "/") return SearchPage;
     if (this.path.startsWith("/project/")) return ProjectPage;
     if (this.path.startsWith("/project_editor")) return ProjectEditorPage;
+    if (this.path.startsWith("/drafts")) return DraftsPage;
+    if (this.path.startsWith("/preview")) return ProjectPage;
   }
 
   showLoginModal() {
@@ -79,11 +81,19 @@ export default class App extends Vue {
   }
 
   logout() {
-    this.firebaseAuth?.signOut();
+    const firebaseAuth = getAuth(initializeApp(config.firebaseConfig));
+    firebaseAuth.signOut();
   }
 
   getCurrentUser() {
-    return this.firebaseAuth?.currentUser;
+    const firebaseAuth = getAuth(initializeApp(config.firebaseConfig));
+    return new Promise<User | null>((resolve, reject) => {
+      if (firebaseAuth.currentUser) resolve(firebaseAuth.currentUser);
+      const unsubscribe = firebaseAuth.onAuthStateChanged(async (user) => {
+        (unsubscribe as Unsubscribe)();
+        resolve(user);
+      }, reject);
+    });
   }
 }
 </script>

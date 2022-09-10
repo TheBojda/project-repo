@@ -10,21 +10,37 @@ const pool = createPool({
     database: process.env.MYSQL_DATABASE
 });
 
-export async function getProjectDataBySlug(slug: string) {
-    const connection = await pool.getConnection();
+async function runQuery(sql: string, values?: any) {
+    let connection = await pool.getConnection();
     try {
-        const [rows, _] = await connection.execute("SELECT title, short_description, description FROM projects WHERE slug = ?", [slug])
-        return rows[0]
+        return await connection.execute(sql, values)
     } finally {
         connection.release();
     }
 }
 
+export async function getProjectDataBySlug(slug: string) {
+    const [rows, _] = await runQuery("SELECT title, short_description, description FROM projects WHERE slug = ?", [slug])
+    return rows[0]
+}
+
 export async function createDraft(content: string, email: string | null, slug: string | null) {
-    const connection = await pool.getConnection();
-    try {
-        await connection.execute("INSERT INTO drafts (`content`, `email`, `slug`) VALUES (?,?,?)", [content, email, slug])
-    } finally {
-        connection.release();
+    await runQuery("INSERT INTO drafts (`content`, `email`, `slug`) VALUES (?,?,?)", [content, email, slug])
+}
+
+export async function getDrafts(email: string) {
+    let rows
+    if (email) {
+        [rows] = await runQuery("SELECT content, md5(email) as avatar_hash, created FROM drafts WHERE email = ? ORDER BY created ASC", [email])
+    } else {
+        [rows] = await runQuery("SELECT content, md5(email) as avatar_hash, created FROM drafts ORDER BY created ASC")
     }
+    let result: any[] = []
+    for (const row of rows) {
+        result.push({
+            content: JSON.parse(row.content),
+            avatar_hash: row.avatar_hash
+        })
+    }
+    return result
 }
