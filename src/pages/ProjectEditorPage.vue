@@ -33,14 +33,13 @@
           >
         </div>
         <div class="mb-3">
-          <h2>
-            <textarea
-              v-model="description"
-              class="inline-editor"
-              rows="2"
-              placeholder="Optional description of the project (click here to edit)"
-            ></textarea>
-          </h2>
+          <textarea
+            ref="textarea_description"
+            v-model="description"
+            class="inline-editor"
+            rows="2"
+            placeholder="Optional description of the project (click here to edit)"
+          ></textarea>
         </div>
         <div class="mb-3">
           <link-editor v-model="links"></link-editor>
@@ -102,6 +101,31 @@ export default class ProjectEditorPage extends Vue {
   public coords: any = {};
   public links = [];
   public image = "";
+
+  mounted() {
+    this.init();
+  }
+
+  async init() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("draftId")) {
+      const user = await (this.$root as App).getCurrentUser();
+      if (!user) return;
+      const draftId = params.get("draftId");
+      const userToken = await user.getIdToken(true);
+      const draft = await callApi("/api/getDraft", {
+        userToken: userToken,
+        id: draftId,
+      });
+      this.title = draft.content.title;
+      this.short_description = draft.content.short_description;
+      this.description = draft.content.description;
+      this.$nextTick(() => {
+        let textarea = this.$refs.textarea_description as HTMLElement;
+        textarea.style.height = textarea.scrollHeight + "px";
+      });
+    }
+  }
 
   async submitProject() {
     this.errors = [];

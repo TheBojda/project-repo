@@ -30,6 +30,14 @@
             >
               Preview
             </a>
+            <a
+              type="button"
+              class="btn btn-primary mx-1"
+              :href="'/project_editor?draftId=' + draft.id"
+              target="_blank"
+            >
+              Edit
+            </a>
             <button
               type="button"
               class="btn btn-success mx-1"
