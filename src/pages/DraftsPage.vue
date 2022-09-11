@@ -15,7 +15,7 @@
             />
           </td>
           <td>{{ draft.content.title }}</td>
-          <td class="col-3 text-end">
+          <td class="col-4 text-end">
             <span class="badge bg-success" v-if="draft.state == 'accepted'"
               >Accepted</span
             >

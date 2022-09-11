@@ -29,6 +29,9 @@ index_template.querySelector('head')?.appendChild(parse('<link rel="stylesheet" 
 app.use(express.static('dist/client'))
 app.use(express.static('public'))
 
+if (process.env.DEV_MODE)
+    app.use(express.static('.'))
+
 app.use('/api', api)
 
 async function renderContent(req: Request, res: Response, context: any) {

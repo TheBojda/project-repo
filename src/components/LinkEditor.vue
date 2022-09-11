@@ -54,6 +54,15 @@ export default class LinkEditor extends Vue {
   public description = "";
   public links = [] as Link[];
 
+  created() {
+    this.$watch(
+      "modelValue",
+      (val) => {
+        this.links = val ? val : [];
+      },
+      { immediate: true }
+    );
+  }
   addLink() {
     let link = new Link();
     link.url = this.url;
@@ -80,7 +89,7 @@ export default class LinkEditor extends Vue {
 
 <style scoped>
 .link-line {
-  font-size: 1.5em;
+  font-size: 1.2em;
 }
 .link-icon {
   color: #08c;

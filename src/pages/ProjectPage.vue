@@ -4,7 +4,6 @@
     <div class="row justify-content-md-center">
       <div class="col-lg-8">
         <h1 class="text-center">{{ content.title }}</h1>
-        <h2>{{ content.short_description }}</h2>
         <span>{{ content.description }}</span>
       </div>
     </div>
@@ -24,7 +23,6 @@ import App from "../components/App.vue";
 export default class ProjectPage extends Vue {
   public content = {
     title: "",
-    short_description: "",
     description: "",
   };
 
@@ -50,7 +48,6 @@ export default class ProjectPage extends Vue {
         userToken: userToken,
         id: draftId,
       });
-      console.log(draft);
       this.content = draft.content;
     }
   }

@@ -20,19 +20,6 @@
           <image-drop ref="imgedrop" v-model="image"></image-drop>
         </div>
         <div class="mb-3">
-          <h2>
-            <textarea
-              v-model="short_description"
-              class="inline-editor"
-              rows="2"
-              placeholder="Short description of the project (click here to edit)"
-            ></textarea>
-          </h2>
-          <small class="red" v-if="errors.includes('req_short_desc')"
-            >Short description is required</small
-          >
-        </div>
-        <div class="mb-3">
           <textarea
             ref="textarea_description"
             v-model="description"
@@ -40,6 +27,9 @@
             rows="2"
             placeholder="Optional description of the project (click here to edit)"
           ></textarea>
+          <small class="red" v-if="errors.includes('req_desc')"
+            >Description is required</small
+          >
         </div>
         <div class="mb-3">
           <link-editor v-model="links"></link-editor>
@@ -95,12 +85,13 @@ export default class ProjectEditorPage extends Vue {
   public errors: string[] = [];
 
   public title = "";
-  public short_description = "";
   public description = "";
   public categories: string[] = [];
   public coords: any = {};
   public links = [];
   public image = "";
+
+  private draftId?: string | null;
 
   mounted() {
     this.init();
@@ -111,17 +102,17 @@ export default class ProjectEditorPage extends Vue {
     if (params.has("draftId")) {
       const user = await (this.$root as App).getCurrentUser();
       if (!user) return;
-      const draftId = params.get("draftId");
+      this.draftId = params.get("draftId");
       const userToken = await user.getIdToken(true);
       const draft = await callApi("/api/getDraft", {
         userToken: userToken,
-        id: draftId,
+        id: this.draftId,
       });
       this.title = draft.content.title;
-      this.short_description = draft.content.short_description;
       this.description = draft.content.description;
       this.image = draft.content.image;
       this.categories = draft.content.categories;
+      this.links = draft.content.links;
       this.$nextTick(() => {
         let textarea = this.$refs.textarea_description as HTMLElement;
         textarea.style.height = textarea.scrollHeight + "px";
@@ -132,7 +123,7 @@ export default class ProjectEditorPage extends Vue {
   async submitProject() {
     this.errors = [];
     if (this.title == "") this.errors.push("req_title");
-    if (this.short_description == "") this.errors.push("req_short_desc");
+    if (this.description == "") this.errors.push("req_desc");
     if (this.categories.length == 0) this.errors.push("req_category");
     if (this.errors.length > 0) return;
 
@@ -152,21 +143,23 @@ export default class ProjectEditorPage extends Vue {
       captchaToken
     );
 
-    console.log(uploadResponse);
+    const image_url = uploadResponse
+      ? `/images/${uploadResponse.hash}.jpg`
+      : this.image;
 
     captchaToken = await (this as any).$recaptcha("login");
 
     const response = await callApi("/api/submitDraft", {
       userToken: userToken,
       captchaToken: captchaToken,
+      draftId: this.draftId,
       content: {
         title: this.title,
-        short_description: this.short_description,
         description: this.description,
         links: this.links,
         categories: this.categories,
         coords: this.coords,
-        image: `/images/${uploadResponse.hash}.jpg`,
+        image: image_url,
       },
     });
 

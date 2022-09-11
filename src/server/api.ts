@@ -9,7 +9,7 @@ import * as path from 'path';
 
 import { verifyCaptcha } from './services/recaptcha_service'
 import { verifyUser } from './services/firebase_service'
-import { createDraft, getDrafts, getDraft, setDraftState, updateDraftSlug, getUserRole, createProject } from './services/db_service'
+import { createDraft, getDrafts, getDraft, setDraftState, updateDraftSlug, updateDraft, getUserRole, createProject, updateProject } from './services/db_service'
 
 const api = Router();
 
@@ -46,7 +46,11 @@ api.get('/version', async (req: Request, res: Response) => {
 
 api.post('/submitDraft', jsonParser, verify_captcha, auth, async (req: Request, res: Response) => {
     const user = req.body.currentUser
-    await createDraft(JSON.stringify(req.body.content), user.email, null)
+    if (req.body.draftId) {
+        await updateDraft(req.body.draftId, JSON.stringify(req.body.content), user.email)
+    } else {
+        await createDraft(JSON.stringify(req.body.content), user.email)
+    }
     res.send({ success: true })
 })
 
@@ -82,11 +86,15 @@ api.post('/setDraftState', jsonParser, auth, async (req: Request, res: Response)
 
     if (req.body.state == 'accepted') {
         const draft = await getDraft(req.body.id)
-        const slug = slugify(draft.content.title, { lower: true }) + '-' + Date.now().toString(16)
-        const description = draft.content.short_description + ' ' + draft.content.description
-        createProject(slug, JSON.stringify(draft.content), draft.email, description, draft.content.categories.join(' '),
-            (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
-        updateDraftSlug(req.body.id, slug)
+        if (draft.slug) {
+            updateProject(draft.slug, JSON.stringify(draft.content), draft.email, draft.content.description, draft.content.categories.join(' '),
+                (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
+        } else {
+            const slug = slugify(draft.content.title, { lower: true }) + '-' + Date.now().toString(16)
+            createProject(slug, JSON.stringify(draft.content), draft.email, draft.content.description, draft.content.categories.join(' '),
+                (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
+            updateDraftSlug(req.body.id, slug)
+        }
     }
 
     res.send({ success: true })
