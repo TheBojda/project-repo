@@ -31,16 +31,17 @@ export async function createDraft(content: string, email: string | null, slug: s
 export async function getDrafts(email: string) {
     let rows
     if (email) {
-        [rows] = await runQuery("SELECT id, content, md5(email) as avatar_hash, created FROM drafts WHERE email = ? ORDER BY created ASC", [email])
+        [rows] = await runQuery("SELECT id, content, md5(email) as avatar_hash, created, state FROM drafts WHERE email = ? ORDER BY created ASC", [email])
     } else {
-        [rows] = await runQuery("SELECT id, content, md5(email) as avatar_hash, created FROM drafts ORDER BY created ASC")
+        [rows] = await runQuery("SELECT id, content, md5(email) as avatar_hash, created FROM drafts WHERE state IS NULL ORDER BY created ASC")
     }
     let result: any[] = []
     for (const row of rows) {
         result.push({
             id: row.id,
             content: JSON.parse(row.content),
-            avatar_hash: row.avatar_hash
+            avatar_hash: row.avatar_hash,
+            state: row.state
         })
     }
     return result
@@ -54,9 +55,21 @@ export async function getDraft(id: number) {
     }
 }
 
+export async function setDraftState(id: number, state: string) {
+    await runQuery("UPDATE drafts SET state=? WHERE id=?", [state, id])
+}
+
+export async function updateDraftSlug(id: number, slug: string) {
+    await runQuery("UPDATE drafts SET slug=? WHERE id=?", [slug, id])
+}
+
 export async function getUserRole(email: string) {
     const [rows, _] = await runQuery("SELECT role FROM users WHERE email = ?", [email])
     if ((rows as []).length > 0)
         return rows[0].role;
     return "user";
+}
+
+export async function createProject(slug: string, content: string, email: string, description: string, categories: string, position: { lat: number, lng: number }) {
+    await runQuery('INSERT INTO projects (`slug`, `content`, `email`, `description`, `categories`, `position`) VALUES (?,?,?,?,?,ST_SRID(Point(?,?),4326))', [slug, content, email, description, categories, position.lat, position.lng])
 }

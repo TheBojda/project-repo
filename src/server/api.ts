@@ -1,9 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
+import slugify from 'slugify'
 
 import { verifyCaptcha } from './services/recaptcha_service'
 import { verifyUser } from './services/firebase_service'
-import { createDraft, getDrafts, getDraft, getUserRole } from './services/db_service'
+import { createDraft, getDrafts, getDraft, setDraftState, updateDraftSlug, getUserRole, createProject } from './services/db_service'
 
 const api = Router();
 
@@ -55,6 +56,29 @@ api.post('/getDraft', jsonParser, auth, async (req: Request, res: Response) => {
     }
 
     res.send(draft)
+})
+
+api.post('/setDraftState', jsonParser, auth, async (req: Request, res: Response) => {
+    const user = req.body.currentUser
+    const role = await getUserRole(user.email)
+
+    if (role != 'admin') {
+        res.status(401).send({ success: false, error: 'Only admins can set drafts state!' })
+        return
+    }
+
+    await setDraftState(req.body.id, req.body.state)
+
+    if (req.body.state == 'accepted') {
+        const draft = await getDraft(req.body.id)
+        const slug = slugify(draft.content.title, { lower: true }) + '-' + Date.now().toString(16)
+        const description = draft.content.short_description + ' ' + draft.content.description
+        createProject(slug, JSON.stringify(draft.content), draft.email, description, draft.content.categories.join(' '),
+            draft.content.coords ? draft.content.coords : { lat: 0, lng: 0 })
+        updateDraftSlug(req.body.id, slug)
+    }
+
+    res.send({ success: true })
 })
 
 export default api;

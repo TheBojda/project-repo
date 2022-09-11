@@ -16,6 +16,12 @@
           </td>
           <td>{{ draft.content.title }}</td>
           <td class="col-3 text-end">
+            <span class="badge bg-success" v-if="draft.state == 'accepted'"
+              >Accepted</span
+            >
+            <span class="badge bg-danger" v-if="draft.state == 'rejected'"
+              >Rejected</span
+            >
             <a
               type="button"
               class="btn btn-dark mx-1"
@@ -27,6 +33,7 @@
             <button
               type="button"
               class="btn btn-success mx-1"
+              @click="setDraftState(draft.id, 'accepted')"
               v-if="role == 'admin'"
             >
               Accept
@@ -34,6 +41,7 @@
             <button
               type="button"
               class="btn btn-danger mx-1"
+              @click="setDraftState(draft.id, 'rejected')"
               v-if="role == 'admin'"
             >
               Reject
@@ -71,6 +79,18 @@ export default class DraftsPage extends Vue {
     });
     this.drafts = response.drafts;
     this.role = response.role;
+  }
+
+  async setDraftState(id: number, state: string) {
+    const user = await (this.$root as App).getCurrentUser();
+    if (!user) return;
+    const userToken = await user.getIdToken(true);
+    await callApi("/api/setDraftState", {
+      userToken: userToken,
+      id: id,
+      state: state,
+    });
+    this.init();
   }
 }
 </script>
