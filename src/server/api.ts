@@ -9,7 +9,7 @@ import * as path from 'path';
 
 import { verifyCaptcha } from './services/recaptcha_service'
 import { verifyUser } from './services/firebase_service'
-import { createDraft, getDrafts, getDraft, setDraftState, updateDraftSlug, updateDraft, getUserRole, createProject, updateProject } from './services/db_service'
+import { createDraft, getDrafts, getDraft, setDraftState, updateDraftSlug, updateDraft, getUserRole, createProject, updateProject, getProjectDataBySlug } from './services/db_service'
 
 const api = Router();
 
@@ -98,6 +98,11 @@ api.post('/setDraftState', jsonParser, auth, async (req: Request, res: Response)
     }
 
     res.send({ success: true })
+})
+
+api.post('/getProject', jsonParser, async (req: Request, res: Response) => {
+    const project = await getProjectDataBySlug(req.body.slug)
+    res.send(project)
 })
 
 api.post('/uploadImage', upload.single('image'), verify_captcha, auth, async (req: Request, res: Response) => {

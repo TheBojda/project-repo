@@ -43,6 +43,8 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 
+import { getIcon } from "../utils/link_utils";
+
 class Link {
   public url = "";
   public description = "";
@@ -79,10 +81,7 @@ export default class LinkEditor extends Vue {
   }
 
   getIcon(url) {
-    if (url.startsWith("https://github")) return "fab fa-square-github";
-    if (url.startsWith("https://youtube.com")) return "fab fa-square-youtube";
-    if (url.startsWith("https://facebook.com")) return "fab fa-square-facebook";
-    return "fa fa-external-link-square";
+    return getIcon(url);
   }
 }
 </script>

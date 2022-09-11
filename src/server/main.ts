@@ -18,7 +18,8 @@ const port = 3000;
 
 
 const index_template_ssr = parse(fs.readFileSync(path.join(__dirname, '../template.html')).toString())
-index_template_ssr.querySelector('body')?.appendChild(parse('<script src="/index_ssr.js"></script>'))
+// index_template_ssr.querySelector('body')?.appendChild(parse('<script src="/index_ssr.js"></script>'))
+index_template_ssr.querySelector('body')?.appendChild(parse('<script src="/index.js"></script>'))
 index_template_ssr.querySelector('head')?.appendChild(parse('<link rel="stylesheet" href="/index.css">'))
 
 const index_template = parse(fs.readFileSync(path.join(__dirname, '../template.html')).toString())

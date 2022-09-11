@@ -8,11 +8,6 @@
       "distDir": "./dist/client",
       "context": "browser"
     },
-    "client_ssr": {
-      "source": "./src/client/index_ssr.ts",
-      "distDir": "./dist/client",
-      "context": "browser"
-    },
     "server": {
       "source": "./src/server/main.ts",
       "distDir": "./dist/server",
