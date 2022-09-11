@@ -74,7 +74,7 @@ api.post('/setDraftState', jsonParser, auth, async (req: Request, res: Response)
         const slug = slugify(draft.content.title, { lower: true }) + '-' + Date.now().toString(16)
         const description = draft.content.short_description + ' ' + draft.content.description
         createProject(slug, JSON.stringify(draft.content), draft.email, description, draft.content.categories.join(' '),
-            draft.content.coords ? draft.content.coords : { lat: 0, lng: 0 })
+            (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
         updateDraftSlug(req.body.id, slug)
     }
 

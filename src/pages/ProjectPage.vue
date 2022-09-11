@@ -31,9 +31,7 @@ export default class ProjectPage extends Vue {
   created() {
     if (!isBrowser()) {
       const context = useSSRContext();
-      this.content.title = context?.title;
-      this.content.short_description = context?.short_description;
-      this.content.description = context?.description;
+      this.content = context?.content;
     }
   }
 

@@ -50,8 +50,7 @@ app.get('/preview', renderIndex);
 app.get('/project/:slug', async (req: Request, res: Response) => {
     const slug = req.params.slug
     const projectData = await getProjectDataBySlug(slug)
-    console.log(projectData)
-    renderContent(req, res, { ...projectData });
+    renderContent(req, res, projectData);
 });
 
 
