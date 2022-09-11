@@ -17,7 +17,7 @@
           >
         </div>
         <div class="mb-3">
-          <image-drop v-model="image"></image-drop>
+          <image-drop ref="imgedrop" v-model="image"></image-drop>
         </div>
         <div class="mb-3">
           <h2>
@@ -120,6 +120,8 @@ export default class ProjectEditorPage extends Vue {
       this.title = draft.content.title;
       this.short_description = draft.content.short_description;
       this.description = draft.content.description;
+      this.image = draft.content.image;
+      this.categories = draft.content.categories;
       this.$nextTick(() => {
         let textarea = this.$refs.textarea_description as HTMLElement;
         textarea.style.height = textarea.scrollHeight + "px";
@@ -141,9 +143,18 @@ export default class ProjectEditorPage extends Vue {
     }
 
     await (this as any).$recaptchaLoaded();
-    const captchaToken = await (this as any).$recaptcha("login");
+    let captchaToken = await (this as any).$recaptcha("login");
 
     const userToken = await user.getIdToken(true);
+
+    const uploadResponse = await (this.$refs.imgedrop as ImageDrop).uploadFile(
+      userToken,
+      captchaToken
+    );
+
+    console.log(uploadResponse);
+
+    captchaToken = await (this as any).$recaptcha("login");
 
     const response = await callApi("/api/submitDraft", {
       userToken: userToken,
@@ -155,7 +166,7 @@ export default class ProjectEditorPage extends Vue {
         links: this.links,
         categories: this.categories,
         coords: this.coords,
-        image: this.image,
+        image: `/images/${uploadResponse.hash}.jpg`,
       },
     });
 

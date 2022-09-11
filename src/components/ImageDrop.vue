@@ -15,6 +15,8 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 
+import { uploadImage } from "../utils/api_utils";
+
 const events = ["dragenter", "dragover", "dragleave", "drop"];
 
 function preventDefaults(e) {
@@ -24,6 +26,18 @@ function preventDefaults(e) {
 @Options({ props: ["modelValue"] })
 export default class ImageDrop extends Vue {
   public previewSrc = "";
+
+  private file: any;
+
+  created() {
+    this.$watch(
+      "modelValue",
+      (val) => {
+        this.previewSrc = val;
+      },
+      { immediate: true }
+    );
+  }
 
   mounted() {
     events.forEach((eventName) => {
@@ -40,7 +54,7 @@ export default class ImageDrop extends Vue {
   onDrop(e) {
     const files = e.dataTransfer.files;
     if (files.length > 0) {
-      const file = files[0];
+      this.file = files[0];
 
       let fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
@@ -48,8 +62,13 @@ export default class ImageDrop extends Vue {
         this.previewSrc = result;
         this.$emit("update:modelValue", result);
       });
-      fileReader.readAsDataURL(file);
+      fileReader.readAsDataURL(this.file);
     }
+  }
+
+  async uploadFile(userToken: string, captchaToken: string) {
+    if (!this.file) return;
+    return await uploadImage(this.file, userToken, captchaToken);
   }
 }
 </script>

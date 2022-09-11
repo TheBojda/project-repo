@@ -1,6 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import slugify from 'slugify'
+import * as crypto from "crypto";
+import multer from 'multer';
+import sharp from 'sharp';
+import * as fs from 'fs';
+import * as path from 'path';
 
 import { verifyCaptcha } from './services/recaptcha_service'
 import { verifyUser } from './services/firebase_service'
@@ -9,6 +14,12 @@ import { createDraft, getDrafts, getDraft, setDraftState, updateDraftSlug, getUs
 const api = Router();
 
 const jsonParser = bodyParser.json()
+
+const upload = multer({
+    limits: {
+        fileSize: 4 * 1024 * 1024,
+    }
+})
 
 async function auth(req: Request, res: Response, next: NextFunction) {
     const user = await verifyUser(req.body.userToken)
@@ -79,6 +90,22 @@ api.post('/setDraftState', jsonParser, auth, async (req: Request, res: Response)
     }
 
     res.send({ success: true })
+})
+
+api.post('/uploadImage', upload.single('image'), verify_captcha, auth, async (req: Request, res: Response) => {
+    const file = (req as any).file
+    if (!file) {
+        res.send({ success: false, error: 'No image!' })
+        return;
+    }
+
+    const convertedFile = await sharp(file.buffer).jpeg({
+        quality: 75
+    }).toBuffer();
+
+    const hash = crypto.createHash('sha256').update(convertedFile).digest('hex');
+    fs.writeFileSync(path.join(__dirname, `../../public/images/${hash}.jpg`), convertedFile);
+    res.send({ hash: hash })
 })
 
 export default api;
