@@ -48,7 +48,6 @@ export default class LeafletMap extends Vue {
     });
     marker.addTo(map);
     map.panTo(coords);
-    console.log(coords);
   }
 }
 </script>

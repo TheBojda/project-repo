@@ -57,7 +57,7 @@
         </div>
       </div>
     </div>
-    <div class="footer">
+    <div class="footer mt-4">
       <p class="text-center">
         This content is available under the
         <a
@@ -74,6 +74,7 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 import { useSSRContext } from "vue";
+import md5 from "md5";
 
 import { isBrowser } from "../utils/ssr_utils";
 import { callApi } from "../utils/api_utils";
@@ -116,6 +117,7 @@ export default class ProjectPage extends Vue {
         id: draftId,
       });
       this.content = draft.content;
+      this.avatar_hash = md5(draft.email);
     }
 
     const path = window.location.pathname;

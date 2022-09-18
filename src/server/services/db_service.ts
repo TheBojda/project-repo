@@ -35,7 +35,6 @@ export async function updateDraft(draftId: number, content: string, email: strin
     await runQuery("UPDATE drafts SET content=?, state=NULL WHERE id=? AND email=?", [content, draftId, email])
 }
 
-
 export async function getDrafts(email: string) {
     let rows
     if (email) {
@@ -68,15 +67,25 @@ export async function setDraftState(id: number, state: string) {
     await runQuery("UPDATE drafts SET state=? WHERE id=?", [state, id])
 }
 
-export async function updateDraftSlug(id: number, slug: string) {
-    await runQuery("UPDATE drafts SET slug=? WHERE id=?", [slug, id])
-}
-
 export async function getUserRole(email: string) {
     const [rows, _] = await runQuery("SELECT role FROM users WHERE email = ?", [email])
     if ((rows as []).length > 0)
         return rows[0].role;
     return "user";
+}
+
+export async function getProjects(email: string) {
+    let rows
+    [rows] = await runQuery("select slug, content, md5(email) as avatar_hash from projects WHERE email = ? ORDER BY created ASC", [email])
+    let result: any[] = []
+    for (const row of rows) {
+        result.push({
+            content: JSON.parse(row.content),
+            avatar_hash: row.avatar_hash,
+            slug: row.slug
+        })
+    }
+    return result
 }
 
 export async function createProject(slug: string, content: string, email: string, description: string, categories: string, position: { lat: number, lng: number }) {
@@ -85,4 +94,19 @@ export async function createProject(slug: string, content: string, email: string
 
 export async function updateProject(slug: string, content: string, email: string, description: string, categories: string, position: { lat: number, lng: number }) {
     await runQuery('UPDATE projects SET content=?, description=?, categories=?, position=ST_SRID(Point(?,?),4326) WHERE slug=? AND email=?', [content, description, categories, position.lat, position.lng, slug, email])
+}
+
+export async function createDraftForProject(slug: string, email: string) {
+    await runQuery('INSERT INTO drafts (`content`, `slug`, `email`) SELECT content, slug, email FROM projects WHERE slug=? AND email=?', [slug, email])
+}
+
+export async function getDraftIdBySlug(slug: string, email: string) {
+    const [rows, _] = await runQuery("SELECT id FROM drafts WHERE slug=? AND email = ?", [slug, email])
+    if ((rows as []).length > 0)
+        return rows[0].id;
+    return null;
+}
+
+export async function deleteDraftById(id: number) {
+    await runQuery("DELETE FROM drafts WHERE id=?", [id])
 }

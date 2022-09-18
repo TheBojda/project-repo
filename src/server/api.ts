@@ -9,7 +9,10 @@ import * as path from 'path';
 
 import { verifyCaptcha } from './services/recaptcha_service'
 import { verifyUser } from './services/firebase_service'
-import { createDraft, getDrafts, getDraft, setDraftState, updateDraftSlug, updateDraft, getUserRole, createProject, updateProject, getProjectDataBySlug } from './services/db_service'
+import {
+    createDraft, getDrafts, getDraft, setDraftState, updateDraft, getUserRole, createProject, updateProject,
+    getProjectDataBySlug, getProjects, createDraftForProject, getDraftIdBySlug, deleteDraftById
+} from './services/db_service'
 
 const api = Router();
 
@@ -61,6 +64,27 @@ api.post('/getDrafts', jsonParser, auth, async (req: Request, res: Response) => 
     res.send({ role: role, drafts: drafts })
 })
 
+api.post('/getProjects', jsonParser, auth, async (req: Request, res: Response) => {
+    const user = req.body.currentUser
+    const projects = await getProjects(user.email)
+    res.send({ projects: projects })
+})
+
+api.post('/createDraftForProject', jsonParser, verify_captcha, auth, async (req: Request, res: Response) => {
+    const user = req.body.currentUser
+    const slug = req.body.slug
+
+    let id = await getDraftIdBySlug(slug, user.email)
+    if (id) {
+        res.send({ id: id })
+        return
+    }
+
+    await createDraftForProject(slug, user.email)
+    id = await getDraftIdBySlug(slug, user.email)
+    res.send({ id: id })
+})
+
 api.post('/getDraft', jsonParser, auth, async (req: Request, res: Response) => {
     const user = req.body.currentUser
     const draft = await getDraft(req.body.id)
@@ -82,19 +106,19 @@ api.post('/setDraftState', jsonParser, auth, async (req: Request, res: Response)
         return
     }
 
-    await setDraftState(req.body.id, req.body.state)
-
     if (req.body.state == 'accepted') {
         const draft = await getDraft(req.body.id)
         if (draft.slug) {
-            updateProject(draft.slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.categories.join(' '),
+            await updateProject(draft.slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.categories.join(' '),
                 (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
         } else {
             const slug = slugify(draft.content.title, { lower: true }) + '-' + Date.now().toString(16)
-            createProject(slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.categories.join(' '),
+            await createProject(slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.categories.join(' '),
                 (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
-            updateDraftSlug(req.body.id, slug)
         }
+        deleteDraftById(req.body.id)
+    } else {
+        await setDraftState(req.body.id, req.body.state)
     }
 
     res.send({ success: true })
