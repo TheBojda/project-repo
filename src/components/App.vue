@@ -6,7 +6,6 @@
       ref="topNavigation"
     />
     <component :is="getMainComponent()"></component>
-    <div class="footer"></div>
     <login-modal ref="loginModal" />
   </div>
 </template>

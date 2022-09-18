@@ -54,6 +54,12 @@ app.get('/project/:slug', async (req: Request, res: Response) => {
     renderContent(req, res, projectData);
 });
 
+app.get('/project/:slug/json', async (req: Request, res: Response) => {
+    const slug = req.params.slug
+    const projectData = await getProjectDataBySlug(slug)
+    res.send(projectData)
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

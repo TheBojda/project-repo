@@ -57,6 +57,17 @@
         </div>
       </div>
     </div>
+    <div class="footer">
+      <p class="text-center">
+        This content is available under the
+        <a
+          href="https://creativecommons.org/licenses/by-sa/4.0/"
+          target="_blank"
+          >Creative Commons Attribution-ShareAlike License 4.0</a
+        >
+        additional terms may apply.
+      </p>
+    </div>
   </main>
 </template>
 
@@ -109,10 +120,9 @@ export default class ProjectPage extends Vue {
 
     const path = window.location.pathname;
     if (path.startsWith("/project/")) {
-      const slug = window.location.pathname.substring(9);
-      const project = await callApi("/api/getProject", {
-        slug: slug,
-      });
+      const project = await (
+        await fetch(window.location.pathname + "/json")
+      ).json();
       this.content = project.content;
       this.avatar_hash = project.avatar_hash;
     }
