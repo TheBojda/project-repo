@@ -4,7 +4,7 @@
     <div class="row justify-content-md-center">
       <div class="col-lg-8">
         <h1 class="text-center">{{ content.title }}</h1>
-        <div class="alert alert-dark" role="alert">
+        <div class="alert alert-dark" role="alert" v-if="!avatar_hash">
           This page is imported and not maintained on our side! If you want to
           be the maintainer of this page, please contact us.
         </div>
@@ -35,6 +35,26 @@
           :coords="content.coords"
           v-if="content.coords"
         ></leaflet-map>
+        <div class="row mt-2" v-if="avatar_hash">
+          <div class="col"></div>
+          <div class="col-3">
+            This page is maintained by<br />
+            <small>(click on the image)</small>
+          </div>
+          <div class="col-1">
+            <a
+              :href="`https://www.gravatar.com/${avatar_hash}`"
+              target="_blank"
+            >
+              <img
+                :src="`https://www.gravatar.com/avatar/${avatar_hash}?s=40`"
+                width="40"
+                height="40"
+                class="d-inline-block align-middle"
+              />
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </main>
@@ -56,12 +76,14 @@ import LeafletMap from "../components/LeafletMap.vue";
 })
 export default class ProjectPage extends Vue {
   public content: any = {};
+  public avatar_hash: string = "";
   public categories = {};
 
   created() {
     if (!isBrowser()) {
       const context = useSSRContext();
       this.content = context?.content;
+      this.avatar_hash = context?.avatar_hash;
     }
   }
 
@@ -92,6 +114,7 @@ export default class ProjectPage extends Vue {
         slug: slug,
       });
       this.content = project.content;
+      this.avatar_hash = project.avatar_hash;
     }
   }
 

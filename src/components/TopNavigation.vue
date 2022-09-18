@@ -27,8 +27,10 @@
             />
           </a>
           <div class="dropdown-menu profileDropDown" ref="userMenu">
-            <a class="dropdown-item" href="/profile">Profile</a>
-            <a class="dropdown-item" href="/drafts">Drafts</a>
+            <a class="dropdown-item" :href="userLinkURL" target="_blank"
+              >Profile</a
+            >
+            <a class="dropdown-item" href="/drafts">Projects & drafts</a>
             <a class="dropdown-item" href="#" @click="logout">Log Off</a>
           </div>
         </li>
@@ -46,6 +48,7 @@ import * as md5 from "md5";
 @Options({})
 export default class TopNavigation extends Vue {
   public userPhotoURL = "";
+  public userLinkURL = "";
 
   private navbar?: Collapse;
   private userMenu?: Dropdown;
@@ -54,6 +57,7 @@ export default class TopNavigation extends Vue {
     if (user) {
       this.userPhotoURL =
         "https://www.gravatar.com/avatar/" + md5(user.email) + "?s=40";
+      this.userLinkURL = "https://www.gravatar.com/" + md5(user.email);
     } else {
       this.userPhotoURL = "";
     }

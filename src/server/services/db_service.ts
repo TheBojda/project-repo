@@ -20,9 +20,10 @@ async function runQuery(sql: string, values?: any) {
 }
 
 export async function getProjectDataBySlug(slug: string) {
-    const [rows, _] = await runQuery("SELECT content FROM projects WHERE slug = ?", [slug])
+    const [rows, _] = await runQuery("SELECT content, md5(email) as avatar_hash FROM projects WHERE slug = ?", [slug])
     return {
-        content: JSON.parse(rows[0].content)
+        content: JSON.parse(rows[0].content),
+        avatar_hash: rows[0].avatar_hash
     }
 }
 
