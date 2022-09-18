@@ -60,7 +60,6 @@ export default class TopNavigation extends Vue {
   }
 
   mounted() {
-    // bootstrap should be included only on browser side
     const bootstrap = require("bootstrap");
     this.navbar = new bootstrap.Collapse(this.$refs.navbar as Element, {
       toggle: false,

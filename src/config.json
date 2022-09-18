@@ -1,4 +1,5 @@
 {
+    "recaptchaSiteKey": "6LeRFughAAAAAKEnY2Qnv_A2hB7ffh_yFmkD7Ed2",
     "firebaseConfig": {
         "apiKey": "AIzaSyDlc9pnPh4jmzg43KRdBrqCkK6117G6p8I",
         "authDomain": "test-project-8440d.firebaseapp.com",
@@ -7,6 +8,5 @@
         "storageBucket": "test-project-8440d.appspot.com",
         "messagingSenderId": "1061585054183",
         "appId": "1:1061585054183:web:311b7c4a04a3d1ab8a3542"
-    },
-    "recaptchaSiteKey": "6LeRFughAAAAAKEnY2Qnv_A2hB7ffh_yFmkD7Ed2"
+    }
 }

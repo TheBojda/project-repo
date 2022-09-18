@@ -87,11 +87,11 @@ api.post('/setDraftState', jsonParser, auth, async (req: Request, res: Response)
     if (req.body.state == 'accepted') {
         const draft = await getDraft(req.body.id)
         if (draft.slug) {
-            updateProject(draft.slug, JSON.stringify(draft.content), draft.email, draft.content.description, draft.content.categories.join(' '),
+            updateProject(draft.slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.categories.join(' '),
                 (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
         } else {
             const slug = slugify(draft.content.title, { lower: true }) + '-' + Date.now().toString(16)
-            createProject(slug, JSON.stringify(draft.content), draft.email, draft.content.description, draft.content.categories.join(' '),
+            createProject(slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.categories.join(' '),
                 (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
             updateDraftSlug(req.body.id, slug)
         }

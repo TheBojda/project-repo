@@ -4,8 +4,14 @@
     <div class="row justify-content-md-center">
       <div class="col-lg-8">
         <h1 class="text-center">{{ content.title }}</h1>
+        <div class="alert alert-dark" role="alert">
+          This page is imported and not maintained on our side! If you want to
+          be the maintainer of this page, please contact us.
+        </div>
         <img :src="content.image" class="rounded w-100 mb-3" />
-        <div class="mb-3" style="white-space: pre-wrap;">{{ content.description }}</div>
+        <div class="mb-3" style="white-space: pre-wrap">
+          {{ content.description }}
+        </div>
         <div class="mb-3">
           <span
             class="badge bg-primary tag-badge"
@@ -25,6 +31,10 @@
             <a :href="link.url" target="_blank">{{ link.url }}</a>
           </div>
         </div>
+        <leaflet-map
+          :coords="content.coords"
+          v-if="content.coords"
+        ></leaflet-map>
       </div>
     </div>
   </main>
@@ -39,8 +49,11 @@ import { callApi } from "../utils/api_utils";
 import { getIcon } from "../utils/link_utils";
 
 import App from "../components/App.vue";
+import LeafletMap from "../components/LeafletMap.vue";
 
-@Options({})
+@Options({
+  components: { LeafletMap },
+})
 export default class ProjectPage extends Vue {
   public content: any = {};
   public categories = {};

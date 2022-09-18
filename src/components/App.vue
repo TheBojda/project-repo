@@ -15,7 +15,7 @@
 import { Options, Vue } from "vue-class-component";
 import { useSSRContext } from "vue";
 import { initializeApp } from "firebase/app";
-import { getAuth, Auth, User, Unsubscribe } from "firebase/auth";
+import { getAuth, User, Unsubscribe } from "firebase/auth";
 
 import { isBrowser } from "../utils/ssr_utils";
 import config from "../config.json";
