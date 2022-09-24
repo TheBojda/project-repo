@@ -34,9 +34,9 @@
         <div class="mb-3">
           <link-editor v-model="links"></link-editor>
         </div>
-        <category-selector v-model="categories"></category-selector>
+        <category-selector v-model="category"></category-selector>
         <small class="red" v-if="errors.includes('req_category')"
-          >Choose minimum 1 category</small
+          >Choose a category</small
         >
         <coordinate-selector v-model="coords"></coordinate-selector>
         <div class="mt-3 mb-3">
@@ -86,7 +86,7 @@ export default class ProjectEditorPage extends Vue {
 
   public title = "";
   public description = "";
-  public categories: string[] = [];
+  public category: string = "";
   public coords: any = {};
   public links = [];
   public image = "";
@@ -111,7 +111,7 @@ export default class ProjectEditorPage extends Vue {
       this.title = draft.content.title;
       this.description = draft.content.description;
       this.image = draft.content.image;
-      this.categories = draft.content.categories;
+      this.category = draft.content.category;
       this.links = draft.content.links;
       this.$nextTick(() => {
         let textarea = this.$refs.textarea_description as HTMLElement;
@@ -124,7 +124,7 @@ export default class ProjectEditorPage extends Vue {
     this.errors = [];
     if (this.title == "") this.errors.push("req_title");
     if (this.description == "") this.errors.push("req_desc");
-    if (this.categories.length == 0) this.errors.push("req_category");
+    if (this.category == "") this.errors.push("req_category");
     if (this.errors.length > 0) return;
 
     const user = await (this.$root as App).getCurrentUser();
@@ -157,7 +157,7 @@ export default class ProjectEditorPage extends Vue {
         title: this.title,
         description: this.description,
         links: this.links,
-        categories: this.categories,
+        category: this.category,
         coords: this.coords,
         image: image_url,
       },

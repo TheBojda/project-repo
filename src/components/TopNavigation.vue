@@ -3,6 +3,9 @@
     <button class="navbar-toggler" type="button" @click="toggleNavbar">
       <span class="navbar-toggler-icon"></span>
     </button>
+    <div class="container">
+      <a class="navbar-brand" href="/">ENVIENTA Search</a>
+    </div>
     <div class="collapse navbar-collapse" ref="navbar">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">

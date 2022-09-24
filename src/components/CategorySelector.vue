@@ -3,10 +3,9 @@
     <div style="margin-top: 1rem">
       <span
         class="badge bg-primary tag-badge"
-        v-for="key in selectedCategories"
-        :key="key"
-        @click="removeCategory(key)"
-        >{{ categories[key] }}</span
+        v-if="selectedCategory"
+        @click="removeCategory(selectedCategory)"
+        >{{ categories[selectedCategory] }}</span
       >
     </div>
     <div style="height: 1rem"></div>
@@ -20,14 +19,15 @@
             data-bs-target="#categoryCollapse"
             aria-expanded="false"
           >
-            <strong v-if="selectedCategories.length == 0"
-              >Choose minimum 1 category.</strong
+            <strong v-if="!selectedCategory"
+              >Choose a category.</strong
             >
-            &nbsp; To select categories, click here!
+            &nbsp; To select category, click here!
           </button>
         </div>
         <div id="categoryCollapse" class="accordion-collapse collapse">
           <div class="accordion-body">
+            <!--
             <label for="categoryFilter" class="form-label"
               >Category filter</label
             >
@@ -38,6 +38,7 @@
               placeholder="Start typing to filter categories!"
             />
             <div style="height: 1rem"></div>
+            -->
             <span
               class="badge bg-secondary tag-badge"
               v-for="(value, key) in categories"
@@ -58,13 +59,13 @@ import { Options, Vue } from "vue-class-component";
 @Options({ props: ["modelValue"] })
 export default class CategorySelector extends Vue {
   public categories = {};
-  public selectedCategories: string[] = [];
+  public selectedCategory: string = "";
 
   created() {
     this.$watch(
       "modelValue",
       (val) => {
-        this.selectedCategories = val ? val : [];
+        this.selectedCategory = val ? val : "";
       },
       { immediate: true }
     );
@@ -79,14 +80,13 @@ export default class CategorySelector extends Vue {
   }
 
   selectCategory(key) {
-    if (this.selectedCategories.indexOf(key) != -1) return;
-    this.selectedCategories.push(key);
-    this.$emit("update:modelValue", this.selectedCategories);
+    this.selectedCategory = key;
+    this.$emit("update:modelValue", this.selectedCategory);
   }
 
   removeCategory(key) {
-    this.selectedCategories.splice(this.selectedCategories.indexOf(key), 1);
-    this.$emit("update:modelValue", this.selectedCategories);
+    this.selectedCategory = "";
+    this.$emit("update:modelValue", this.selectedCategory);
   }
 }
 </script>

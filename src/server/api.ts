@@ -11,7 +11,7 @@ import { verifyCaptcha } from './services/recaptcha_service'
 import { verifyUser } from './services/firebase_service'
 import {
     createDraft, getDrafts, getDraft, setDraftState, updateDraft, getUserRole, createProject, updateProject,
-    getProjectDataBySlug, getProjects, createDraftForProject, getDraftIdBySlug, deleteDraftById
+    getProjectDataBySlug, getProjects, createDraftForProject, getDraftIdBySlug, deleteDraftById, search
 } from './services/db_service'
 
 const api = Router();
@@ -109,11 +109,11 @@ api.post('/setDraftState', jsonParser, auth, async (req: Request, res: Response)
     if (req.body.state == 'accepted') {
         const draft = await getDraft(req.body.id)
         if (draft.slug) {
-            await updateProject(draft.slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.categories.join(' '),
+            await updateProject(draft.slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.category,
                 (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
         } else {
             const slug = slugify(draft.content.title, { lower: true }) + '-' + Date.now().toString(16)
-            await createProject(slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.categories.join(' '),
+            await createProject(slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.category,
                 (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
         }
         deleteDraftById(req.body.id)
@@ -143,6 +143,12 @@ api.post('/uploadImage', upload.single('image'), verify_captcha, auth, async (re
     const hash = crypto.createHash('sha256').update(convertedFile).digest('hex');
     fs.writeFileSync(path.join(__dirname, `../../public/images/${hash}.jpg`), convertedFile);
     res.send({ hash: hash })
+})
+
+api.post('/search', jsonParser, verify_captcha, async (req: Request, res: Response) => {
+    const expression = req.body.expression
+    const projects = await search(expression)
+    res.send({ projects: projects })
 })
 
 export default api;

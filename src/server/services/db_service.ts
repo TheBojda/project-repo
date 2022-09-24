@@ -88,12 +88,12 @@ export async function getProjects(email: string) {
     return result
 }
 
-export async function createProject(slug: string, content: string, email: string, description: string, categories: string, position: { lat: number, lng: number }) {
-    await runQuery('INSERT INTO projects (`slug`, `content`, `email`, `description`, `categories`, `position`) VALUES (?,?,?,?,?,ST_SRID(Point(?,?),4326))', [slug, content, email, description, categories, position.lat, position.lng])
+export async function createProject(slug: string, content: string, email: string, description: string, category: string, position: { lat: number, lng: number }) {
+    await runQuery('INSERT INTO projects (`slug`, `content`, `email`, `description`, `category`, `position`) VALUES (?,?,?,?,?,ST_SRID(Point(?,?),4326))', [slug, content, email, description, category, position.lat, position.lng])
 }
 
-export async function updateProject(slug: string, content: string, email: string, description: string, categories: string, position: { lat: number, lng: number }) {
-    await runQuery('UPDATE projects SET content=?, description=?, categories=?, position=ST_SRID(Point(?,?),4326) WHERE slug=? AND email=?', [content, description, categories, position.lat, position.lng, slug, email])
+export async function updateProject(slug: string, content: string, email: string, description: string, category: string, position: { lat: number, lng: number }) {
+    await runQuery('UPDATE projects SET content=?, description=?, category=?, position=ST_SRID(Point(?,?),4326) WHERE slug=? AND email=?', [content, description, category, position.lat, position.lng, slug, email])
 }
 
 export async function createDraftForProject(slug: string, email: string) {
@@ -109,4 +109,17 @@ export async function getDraftIdBySlug(slug: string, email: string) {
 
 export async function deleteDraftById(id: number) {
     await runQuery("DELETE FROM drafts WHERE id=?", [id])
+}
+
+export async function search(expression: string) {
+    let rows
+    [rows] = await runQuery("SELECT slug, content FROM projects WHERE MATCH (description) AGAINST (?)", [expression]);
+    let result: any[] = []
+    for (const row of rows) {
+        result.push({
+            content: JSON.parse(row.content),
+            slug: row.slug
+        })
+    }
+    return result
 }

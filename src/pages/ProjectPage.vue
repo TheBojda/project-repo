@@ -15,9 +15,7 @@
         <div class="mb-3">
           <span
             class="badge bg-primary tag-badge"
-            v-for="key in content.categories"
-            :key="key"
-            >{{ categories[key] }}</span
+            >{{ categories[content.category] }}</span
           >
         </div>
         <div

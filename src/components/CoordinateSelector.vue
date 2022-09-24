@@ -14,8 +14,7 @@
             aria-expanded="false"
           >
             <strong v-if="!coords.lat && !coords.lng">
-              Set the geographical position of your project if it has.
-              (optional)
+              Set the geographical position. (optional)
             </strong>
             &nbsp; To set the position, click here!
           </button>
@@ -24,14 +23,41 @@
           <div class="accordion-body">
             <div style="width: 100%; height: 500px">
               <div style="width: 100%; height: 100%">
-                <small
-                  >Click on the map to select a position (<a
-                    href="#"
-                    @click="clearPosition"
-                    >clear position</a
-                  >)</small
-                >
-                <div ref="map" style="width: 100%; height: 90%"></div>
+                <div class="container">
+                  <div class="row">
+                    <div class="col">
+                      Click on the map to select a position (<a
+                        href="#"
+                        @click="clearPosition"
+                        >clear position</a
+                      >)
+                    </div>
+                  </div>
+                  <div class="row mt-1 mb-2">
+                    <div class="col-lg input-group">
+                      <button class="btn btn-primary" @click="jumpto">
+                        Jump to:
+                      </button>
+                      <input
+                        v-model="jumpto_coords"
+                        type="text"
+                        class="form-control"
+                        placeholder="GPS coordinate eg.: 37.3978, -122.0610"
+                      />
+                    </div>
+                    <div class="col-lg">
+                      <small>
+                        We don't have address database, so if you want to jump
+                        to an address, search it on
+                        <a href="https://www.google.com/maps" target="_blank"
+                          >Google Maps</a
+                        >, copy the GPS address from right click menu, and click
+                        on the "Jump to" button.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                <div ref="map" style="width: 100%; height: 80%"></div>
               </div>
             </div>
           </div>
@@ -43,6 +69,7 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
+import convert from "geo-coordinates-parser";
 
 @Options({ props: ["modelValue"] })
 export default class CoordinateSelector extends Vue {
@@ -50,6 +77,7 @@ export default class CoordinateSelector extends Vue {
   private map: any;
 
   public coords: any = {};
+  public jumpto_coords = "";
 
   mounted() {
     const L = require("leaflet");
@@ -87,6 +115,11 @@ export default class CoordinateSelector extends Vue {
     this.marker = undefined;
     this.coords = {};
     this.$emit("update:modelValue", this.coords);
+  }
+
+  jumpto() {
+    let coords = convert(this.jumpto_coords);
+    this.map.flyTo([coords.decimalLatitude, coords.decimalLongitude], 17);
   }
 }
 </script>
