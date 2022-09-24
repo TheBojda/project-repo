@@ -65,6 +65,7 @@ export default class LinkEditor extends Vue {
       { immediate: true }
     );
   }
+  
   addLink() {
     let link = new Link();
     link.url = this.url;

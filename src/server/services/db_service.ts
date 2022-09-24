@@ -89,11 +89,11 @@ export async function getProjects(email: string) {
 }
 
 export async function createProject(slug: string, content: string, email: string, description: string, category: string, position: { lat: number, lng: number }) {
-    await runQuery('INSERT INTO projects (`slug`, `content`, `email`, `description`, `category`, `position`) VALUES (?,?,?,?,?,ST_SRID(Point(?,?),4326))', [slug, content, email, description, category, position.lat, position.lng])
+    await runQuery('INSERT INTO projects (`slug`, `content`, `email`, `description`, `category`, `position`) VALUES (?,?,?,?,?,ST_SRID(Point(?,?),4326))', [slug, content, email, description, category, position.lng, position.lat])
 }
 
 export async function updateProject(slug: string, content: string, email: string, description: string, category: string, position: { lat: number, lng: number }) {
-    await runQuery('UPDATE projects SET content=?, description=?, category=?, position=ST_SRID(Point(?,?),4326) WHERE slug=? AND email=?', [content, description, category, position.lat, position.lng, slug, email])
+    await runQuery('UPDATE projects SET content=?, description=?, category=?, position=ST_SRID(Point(?,?),4326) WHERE slug=? AND email=?', [content, description, category, position.lng, position.lat, slug, email])
 }
 
 export async function createDraftForProject(slug: string, email: string) {
@@ -111,9 +111,12 @@ export async function deleteDraftById(id: number) {
     await runQuery("DELETE FROM drafts WHERE id=?", [id])
 }
 
-export async function search(expression: string) {
+export async function search(expression: string, category: string, position?: { lat: number, lng: number }) {
     let rows
-    [rows] = await runQuery("SELECT slug, content FROM projects WHERE MATCH (description) AGAINST (?)", [expression]);
+    if (position && position.lat && position.lng)
+        [rows] = await runQuery("SELECT slug, content, ST_Distance_Sphere(position, ST_SRID(point(?, ?),4326)) as distance FROM projects WHERE MATCH (description) AGAINST (?) AND category=? ORDER BY distance ASC LIMIT 11", [position.lng, position.lat, expression, category]);
+    else
+        [rows] = await runQuery("SELECT slug, content, MATCH (description) AGAINST (?) as relevance FROM projects WHERE MATCH (description) AGAINST (?) AND category=? ORDER BY relevance DESC LIMIT 11", [expression, expression, category]);
     let result: any[] = []
     for (const row of rows) {
         result.push({

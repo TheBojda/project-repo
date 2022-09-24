@@ -146,8 +146,7 @@ api.post('/uploadImage', upload.single('image'), verify_captcha, auth, async (re
 })
 
 api.post('/search', jsonParser, verify_captcha, async (req: Request, res: Response) => {
-    const expression = req.body.expression
-    const projects = await search(expression)
+    const projects = await search(req.body.expression, req.body.category, req.body.coords)
     res.send({ projects: projects })
 })
 

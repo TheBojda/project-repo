@@ -105,9 +105,23 @@ export default class CoordinateSelector extends Vue {
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((p) => {
-        this.map.panTo([p.coords.latitude, p.coords.longitude]);
+        if (!this.marker)
+          this.map.panTo([p.coords.latitude, p.coords.longitude]);
       });
     }
+
+    this.$watch(
+      "modelValue",
+      (val) => {
+        this.coords = val ? val : {};
+        if (this.coords && this.coords.lat && this.coords.lng && this.map) {
+          this.marker = new L.Marker([this.coords.lat, this.coords.lng]);
+          this.marker.addTo(this.map);
+          this.map.panTo([this.coords.lat, this.coords.lng]);
+        }
+      },
+      { immediate: true }
+    );
   }
 
   clearPosition() {
