@@ -58,18 +58,20 @@
             {{ truncate(project.content.description, 160) }}
           </div>
         </div>
-        <div id="service-paginator">
+        <div class="d-flex mt-3">
           <button
             type="button"
             class="btn btn-primary prevButton"
-            style="display: none"
+            v-if="nextOffset && nextOffset > 11"
+            @click="prevPage"
           >
             Previous
           </button>
           <button
             type="button"
-            class="btn btn-primary nextButton float-right"
-            style="display: none"
+            class="btn btn-primary ms-auto"
+            v-if="nextOffset"
+            @click="nextPage"
           >
             Next
           </button>
@@ -98,30 +100,49 @@ export default class SearchPage extends Vue {
   public coords: any = {};
   public errors: string[] = [];
   public projects: any[] = [];
+  public nextOffset = 0;
+
+  private offset = 0;
 
   truncate(str: string, n: number) {
     return str.length > n ? str.slice(0, n - 1) + "..." : str;
   }
 
   mounted() {
+    window.addEventListener("hashchange", this.handleHashChange);
+    this.handleHashChange();
+  }
+
+  unmounted() {
+    window.removeEventListener("hashchange", this.handleHashChange);
+  }
+
+  handleHashChange() {
+    console.log(window.location.hash);
     if (window.location.hash) {
       let frags = window.location.hash.substring(1).split("|");
       if (frags.length > 0) this.category = frags[0];
       if (frags.length > 1) this.searchExpression = decodeURI(frags[1]);
       if (frags.length > 3 && frags[3] && frags[2])
         this.coords = { lat: parseFloat(frags[2]), lng: parseFloat(frags[3]) };
-      this.search();
+      if (frags.length > 4) this.offset = parseInt(frags[4]);
+      this.doSearch();
+    } else {
+      this.searchExpression = "";
+      this.offset = 0;
+      this.optionsVisible = true;
+      this.projects = [];
+      this.nextOffset = 0;
     }
   }
 
-  async search() {
-    this.errors = [];
-    if (this.category == "") this.errors.push("req_category");
-    if (this.errors.length > 0) {
-      this.optionsVisible = true;
-      return;
-    }
+  refreshHash() {
+    window.location.hash = `#${this.category}|${this.searchExpression}|${
+      this.coords.lat || ""
+    }|${this.coords.lng || ""}|${this.offset}`;
+  }
 
+  async doSearch() {
     this.optionsVisible = false;
 
     await (this as any).$recaptchaLoaded();
@@ -132,13 +153,33 @@ export default class SearchPage extends Vue {
       category: this.category,
       coords: this.coords,
       expression: this.searchExpression,
+      offset: this.offset,
     });
 
     this.projects = response.projects;
 
-    window.location.hash = `#${this.category}|${this.searchExpression}|${
-      this.coords.lat || ""
-    }|${this.coords.lng || ""}`;
+    if (response.next_offset) this.nextOffset = response.next_offset;
+  }
+
+  search() {
+    this.errors = [];
+    if (this.category == "") this.errors.push("req_category");
+    if (this.errors.length > 0) {
+      this.optionsVisible = true;
+      return;
+    }
+
+    this.refreshHash();
+  }
+
+  nextPage() {
+    this.offset = this.nextOffset;
+    this.search();
+  }
+
+  prevPage() {
+    this.offset = this.offset - 11;
+    this.search();
   }
 }
 </script>

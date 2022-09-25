@@ -1,4 +1,4 @@
-import { Pool, createPool } from 'mysql2/promise';
+import { createPool } from 'mysql2/promise';
 
 import { init_env } from '../../utils/env_utils'
 init_env()
@@ -111,18 +111,25 @@ export async function deleteDraftById(id: number) {
     await runQuery("DELETE FROM drafts WHERE id=?", [id])
 }
 
-export async function search(expression: string, category: string, position?: { lat: number, lng: number }) {
+export async function search(expression: string, category: string, offset: string, position?: { lat: number, lng: number }) {
     let rows
     if (position && position.lat && position.lng)
-        [rows] = await runQuery("SELECT slug, content, ST_Distance_Sphere(position, ST_SRID(point(?, ?),4326)) as distance FROM projects WHERE MATCH (description) AGAINST (?) AND category=? ORDER BY distance ASC LIMIT 11", [position.lng, position.lat, expression, category]);
+        [rows] = await runQuery("SELECT slug, content, ST_Distance_Sphere(position, ST_SRID(point(?, ?),4326)) as distance FROM projects WHERE MATCH (description) AGAINST (?) AND category=? ORDER BY distance ASC LIMIT 11 OFFSET " + (parseInt(offset) || 0), [position.lng, position.lat, expression, category]);
     else
-        [rows] = await runQuery("SELECT slug, content, MATCH (description) AGAINST (?) as relevance FROM projects WHERE MATCH (description) AGAINST (?) AND category=? ORDER BY relevance DESC LIMIT 11", [expression, expression, category]);
-    let result: any[] = []
+        [rows] = await runQuery("SELECT slug, content, MATCH (description) AGAINST (?) as relevance FROM projects WHERE MATCH (description) AGAINST (?) AND category=? ORDER BY relevance DESC LIMIT 11 OFFSET " + (parseInt(offset) || 0), [expression, expression, category]);
+    let projects: any[] = []
+    let c = 0;
     for (const row of rows) {
-        result.push({
+        projects.push({
             content: JSON.parse(row.content),
             slug: row.slug
         })
+        c++;
+        if (c > 9)
+            break;
     }
+    let result = { projects: projects }
+    if (rows.length > 10)
+        result['next_offset'] = offset + 11;
     return result
 }
