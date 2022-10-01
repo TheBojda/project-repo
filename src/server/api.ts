@@ -6,6 +6,7 @@ import multer from 'multer';
 import sharp from 'sharp';
 import * as fs from 'fs';
 import * as path from 'path';
+import md5 from 'md5';
 
 import { verifyCaptcha } from './services/recaptcha_service'
 import { verifyUser } from './services/firebase_service'
@@ -89,7 +90,7 @@ api.post('/getDraft', jsonParser, auth, async (req: Request, res: Response) => {
     const user = req.body.currentUser
     const draft = await getDraft(req.body.id)
 
-    if (draft.email != user.email) {
+    if (draft.email_hash != md5(user.email)) {
         res.status(401).send({ success: false, error: 'Unauthorized: not your draft!' })
         return
     }
@@ -109,11 +110,11 @@ api.post('/setDraftState', jsonParser, auth, async (req: Request, res: Response)
     if (req.body.state == 'accepted') {
         const draft = await getDraft(req.body.id)
         if (draft.slug) {
-            await updateProject(draft.slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.category,
+            await updateProject(draft.slug, JSON.stringify(draft.content), draft.email_hash, draft.content.title + ' ' + draft.content.description, draft.content.category,
                 (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
         } else {
             const slug = slugify(draft.content.title, { lower: true }) + '-' + Date.now().toString(16)
-            await createProject(slug, JSON.stringify(draft.content), draft.email, draft.content.title + ' ' + draft.content.description, draft.content.category,
+            await createProject(slug, JSON.stringify(draft.content), draft.email_hash, draft.content.title + ' ' + draft.content.description, draft.content.category,
                 (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
         }
         deleteDraftById(req.body.id)

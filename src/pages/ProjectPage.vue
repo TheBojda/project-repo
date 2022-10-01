@@ -31,7 +31,7 @@
         </div>
         <leaflet-map
           :coords="content.coords"
-          v-if="content.coords"
+          v-if="content.coords && content.coords.lat && content.coords.lng"
         ></leaflet-map>
         <div class="row mt-2" v-if="avatar_hash">
           <div class="col"></div>

@@ -20,34 +20,34 @@ async function runQuery(sql: string, values?: any) {
 }
 
 export async function getProjectDataBySlug(slug: string) {
-    const [rows, _] = await runQuery("SELECT content, md5(email) as avatar_hash FROM projects WHERE slug = ?", [slug])
+    const [rows, _] = await runQuery("SELECT content, email_hash FROM projects WHERE slug = ?", [slug])
     return {
         content: JSON.parse(rows[0].content),
-        avatar_hash: rows[0].avatar_hash
+        avatar_hash: rows[0].email_hash
     }
 }
 
 export async function createDraft(content: string, email: string) {
-    await runQuery("INSERT INTO drafts (`content`, `email`) VALUES (?,?)", [content, email])
+    await runQuery("INSERT INTO drafts (`content`, `email_hash`) VALUES (?,md5(?))", [content, email])
 }
 
 export async function updateDraft(draftId: number, content: string, email: string) {
-    await runQuery("UPDATE drafts SET content=?, state=NULL WHERE id=? AND email=?", [content, draftId, email])
+    await runQuery("UPDATE drafts SET content=?, state=NULL WHERE id=? AND email_hash=md5(?)", [content, draftId, email])
 }
 
 export async function getDrafts(email: string) {
     let rows
     if (email) {
-        [rows] = await runQuery("SELECT id, content, md5(email) as avatar_hash, created, state FROM drafts WHERE email = ? ORDER BY state, created ASC", [email])
+        [rows] = await runQuery("SELECT id, content, email_hash, created, state FROM drafts WHERE email_hash = md5(?) ORDER BY state, created ASC", [email])
     } else {
-        [rows] = await runQuery("SELECT id, content, md5(email) as avatar_hash, created FROM drafts WHERE state IS NULL ORDER BY created ASC")
+        [rows] = await runQuery("SELECT id, content, email_hash, created FROM drafts WHERE state IS NULL ORDER BY created ASC")
     }
     let result: any[] = []
     for (const row of rows) {
         result.push({
             id: row.id,
             content: JSON.parse(row.content),
-            avatar_hash: row.avatar_hash,
+            avatar_hash: row.email_hash,
             state: row.state
         })
     }
@@ -55,10 +55,10 @@ export async function getDrafts(email: string) {
 }
 
 export async function getDraft(id: number) {
-    const [rows, _] = await runQuery("SELECT content, email, slug FROM drafts WHERE id = ?", [id])
+    const [rows, _] = await runQuery("SELECT content, email_hash, slug FROM drafts WHERE id = ?", [id])
     return {
         content: JSON.parse(rows[0].content),
-        email: rows[0].email,
+        email_hash: rows[0].email_hash,
         slug: rows[0].slug
     }
 }
@@ -76,32 +76,32 @@ export async function getUserRole(email: string) {
 
 export async function getProjects(email: string) {
     let rows
-    [rows] = await runQuery("select slug, content, md5(email) as avatar_hash from projects WHERE email = ? ORDER BY created ASC", [email])
+    [rows] = await runQuery("select slug, content, email_hash from projects WHERE email_hash = md5(?) ORDER BY created ASC", [email])
     let result: any[] = []
     for (const row of rows) {
         result.push({
             content: JSON.parse(row.content),
-            avatar_hash: row.avatar_hash,
+            avatar_hash: row.email_hash,
             slug: row.slug
         })
     }
     return result
 }
 
-export async function createProject(slug: string, content: string, email: string, description: string, category: string, position: { lat: number, lng: number }) {
-    await runQuery('INSERT INTO projects (`slug`, `content`, `email`, `description`, `category`, `position`) VALUES (?,?,?,?,?,ST_SRID(Point(?,?),4326))', [slug, content, email, description, category, position.lng, position.lat])
+export async function createProject(slug: string, content: string, email_hash: string, description: string, category: string, position: { lat: number, lng: number }) {
+    await runQuery('INSERT INTO projects (`slug`, `content`, `email_hash`, `description`, `category`, `position`) VALUES (?,?,?,?,?,ST_SRID(Point(?,?),4326))', [slug, content, email_hash, description, category, position.lng, position.lat])
 }
 
-export async function updateProject(slug: string, content: string, email: string, description: string, category: string, position: { lat: number, lng: number }) {
-    await runQuery('UPDATE projects SET content=?, description=?, category=?, position=ST_SRID(Point(?,?),4326) WHERE slug=? AND email=?', [content, description, category, position.lng, position.lat, slug, email])
+export async function updateProject(slug: string, content: string, email_hash: string, description: string, category: string, position: { lat: number, lng: number }) {
+    await runQuery('UPDATE projects SET content=?, description=?, category=?, position=ST_SRID(Point(?,?),4326) WHERE slug=? AND email_hash=?', [content, description, category, position.lng, position.lat, slug, email_hash])
 }
 
 export async function createDraftForProject(slug: string, email: string) {
-    await runQuery('INSERT INTO drafts (`content`, `slug`, `email`) SELECT content, slug, email FROM projects WHERE slug=? AND email=?', [slug, email])
+    await runQuery('INSERT INTO drafts (`content`, `slug`, `email_hash`) SELECT content, slug, email_hash FROM projects WHERE slug=? AND email_hash=md5(?)', [slug, email])
 }
 
 export async function getDraftIdBySlug(slug: string, email: string) {
-    const [rows, _] = await runQuery("SELECT id FROM drafts WHERE slug=? AND email = ?", [slug, email])
+    const [rows, _] = await runQuery("SELECT id FROM drafts WHERE slug=? AND email_hash = md5(?)", [slug, email])
     if ((rows as []).length > 0)
         return rows[0].id;
     return null;
