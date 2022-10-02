@@ -19,8 +19,13 @@
             Sign Up / Sign In
           </a>
         </li>
-        <li class="nav-item" v-show="userPhotoURL">
-          <a class="nav-link" href="#" @click="toggleUserMenu">
+        <li class="nav-item dropdown" v-show="userPhotoURL">
+          <a
+            class="nav-link"
+            href="#"
+            @click="toggleUserMenu"
+            data-bs-toggle="dropdown"
+          >
             <img
               id="profileImage"
               :src="userPhotoURL"
@@ -29,7 +34,11 @@
               class="d-inline-block align-top profile-image"
             />
           </a>
-          <div class="dropdown-menu profileDropDown" ref="userMenu">
+          <div
+            class="dropdown-menu profileDropDown"
+            :class="{ show: userMenuShown }"
+            ref="userMenu"
+          >
             <a class="dropdown-item" :href="userLinkURL" target="_blank"
               >Profile</a
             >
@@ -52,9 +61,10 @@ import * as md5 from "md5";
 export default class TopNavigation extends Vue {
   public userPhotoURL = "";
   public userLinkURL = "";
+  public userMenuShown = false;
 
   private navbar?: Collapse;
-  private userMenu?: Dropdown;
+  //private userMenu?: Dropdown;
 
   setUser(user: User | any) {
     if (user) {
@@ -71,7 +81,7 @@ export default class TopNavigation extends Vue {
     this.navbar = new bootstrap.Collapse(this.$refs.navbar as Element, {
       toggle: false,
     });
-    this.userMenu = new bootstrap.Dropdown(this.$refs.userMenu as Element);
+    // this.userMenu = new bootstrap.Dropdown(this.$refs.userMenu as Element);
   }
 
   toggleNavbar() {
@@ -79,7 +89,8 @@ export default class TopNavigation extends Vue {
   }
 
   toggleUserMenu() {
-    this.userMenu?.toggle();
+    // this.userMenu?.toggle();
+    this.userMenuShown = !this.userMenuShown;
   }
 
   showLoginModal() {
