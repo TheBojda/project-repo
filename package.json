@@ -15,7 +15,7 @@
     }
   },
   "scripts": {
-    "mysql:start": "docker run -p 3306:3306 --rm --name project-repo-mysql -e MYSQL_ROOT_PASSWORD=12345 -e MYSQL_DATABASE=project_repo -e MYSQL_USER=project_repo -e MYSQL_PASSWORD=12345 -v project_repo_mysql_data:/var/lib/mysql -d mysql:8.0",
+    "mysql:start": "docker run -p 3306:3306 --rm --name project-repo-mysql -e MYSQL_ROOT_PASSWORD=12345 -e MYSQL_DATABASE=project_repo -e MYSQL_USER=project_repo -e MYSQL_PASSWORD=12345 -v project_repo_mysql_data:/var/lib/mysql -d mysql:5.7",
     "mysql:stop": "docker stop project-repo-mysql",
     "migrations:run": "node database/run_migrations.mjs",
     "migrations:run_dev": "DEV_MODE=true node database/run_migrations.mjs",

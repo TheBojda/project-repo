@@ -7,7 +7,7 @@ CREATE TABLE `projects` (
     `updated` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `description` mediumtext DEFAULT NULL,
     `category` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-    `position` POINT NOT NULL SRID 4326, 
+    `position` POINT NOT NULL, 
     `import_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `slug_IDX` (`slug`) USING BTREE,
