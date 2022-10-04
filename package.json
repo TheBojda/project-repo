@@ -11,7 +11,8 @@
     "server": {
       "source": "./src/server/main.ts",
       "distDir": "./dist/server",
-      "context": "node"
+      "context": "node",
+      "scopeHoist": false
     }
   },
   "scripts": {
@@ -20,7 +21,7 @@
     "migrations:run": "node database/run_migrations.mjs",
     "migrations:run_dev": "DEV_MODE=true node database/run_migrations.mjs",
     "watch": "parcel watch",
-    "build": "parcel build --no-scope-hoist",
+    "build": "parcel build",
     "dev": "concurrently --kill-others \"npm run watch\" \"DEV_MODE=true nodemon ./dist/server/main.js\""
   },
   "keywords": [],
