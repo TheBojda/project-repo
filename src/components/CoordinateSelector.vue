@@ -34,7 +34,7 @@
                     </div>
                   </div>
                   <div class="row mt-1 mb-2">
-                    <div class="col-lg input-group">
+                    <div class="input-group">
                       <button class="btn btn-primary" @click="jumpto">
                         Jump to:
                       </button>
@@ -42,19 +42,16 @@
                         v-model="jumpto_coords"
                         type="text"
                         class="form-control"
-                        placeholder="GPS coordinate eg.: 37.3978, -122.0610"
+                        placeholder="What3words address eg.: ///filled.count.soap or GPS coordinate eg.: 37.3978, -122.0610"
                       />
                     </div>
-                    <div class="col-lg">
-                      <small>
-                        We don't have address database, so if you want to jump
-                        to an address, search it on
-                        <a href="https://www.google.com/maps" target="_blank"
-                          >Google Maps</a
-                        >, copy the GPS address from right click menu, and click
-                        on the "Jump to" button.
-                      </small>
-                    </div>
+                    <small>
+                      Use
+                      <a href="https://what3words.com/" target="_blank"
+                        >what3words</a
+                      >
+                      to find the address and jump to it.
+                    </small>
                   </div>
                 </div>
                 <div ref="map" style="width: 100%; height: 80%"></div>
@@ -70,6 +67,8 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 import convert from "geo-coordinates-parser";
+
+import config from "../config.json";
 
 @Options({ props: ["modelValue"] })
 export default class CoordinateSelector extends Vue {
@@ -131,9 +130,23 @@ export default class CoordinateSelector extends Vue {
     this.$emit("update:modelValue", this.coords);
   }
 
-  jumpto() {
-    let coords = convert(this.jumpto_coords);
-    this.map.flyTo([coords.decimalLatitude, coords.decimalLongitude], 17);
+  async jumpto() {
+    if (this.jumpto_coords) {
+      let coords;
+      if (this.jumpto_coords.startsWith("///")) {
+        const result = await (
+          await fetch(
+            `https://api.what3words.com/v3/convert-to-coordinates?words=${this.jumpto_coords}&key=${config.w3wApiKey}`
+          )
+        ).json();
+        coords = result.coordinates;
+      } else {
+        const result = convert(this.jumpto_coords);
+        coords.lat = result.decimalLatitude;
+        coords.lng = result.decimalLongitude;
+      }
+      this.map.flyTo([coords.lat, coords.lng], 17);
+    }
   }
 }
 </script>
