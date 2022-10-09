@@ -133,3 +133,20 @@ export async function search(expression: string, category: string, offset: strin
         result['next_offset'] = offset + 11;
     return result
 }
+
+export async function collectHashtags(content: string) {
+    let hashtags = content.split(/[\s\n\r]/gmi).filter(v => v.startsWith('#'))
+    for (let hashtag of hashtags) {
+        await runQuery("INSERT IGNORE hashtags (`hashtag`) VALUES (?)", [hashtag.substring(1)]);
+    }
+}
+
+export async function getHashtags() {
+    let rows
+    [rows] = await runQuery("SELECT hashtag FROM hashtags");
+    let result: any[] = [];
+    for (const row of rows) {
+        result.push({ value: row.hashtag, label: row.hashtag })
+    }
+    return result
+}

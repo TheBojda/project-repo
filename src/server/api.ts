@@ -12,7 +12,7 @@ import { verifyCaptcha } from './services/recaptcha_service'
 import { verifyUser } from './services/firebase_service'
 import {
     createDraft, getDrafts, getDraft, setDraftState, updateDraft, getUserRole, createProject, updateProject,
-    getProjectDataBySlug, getProjects, createDraftForProject, getDraftIdBySlug, deleteDraftById, search
+    getProjectDataBySlug, getProjects, createDraftForProject, getDraftIdBySlug, deleteDraftById, search, collectHashtags
 } from './services/db_service'
 
 const api = Router();
@@ -117,7 +117,8 @@ api.post('/setDraftState', jsonParser, auth, async (req: Request, res: Response)
             await createProject(slug, JSON.stringify(draft.content), draft.email_hash, draft.content.title + ' ' + draft.content.description, draft.content.category,
                 (draft.content.coords && draft.content.coords.lat && draft.content.coords.lng) ? draft.content.coords : { lat: 0, lng: 0 })
         }
-        deleteDraftById(req.body.id)
+        await collectHashtags(draft.content.description)
+        await deleteDraftById(req.body.id)
     } else {
         await setDraftState(req.body.id, req.body.state)
     }

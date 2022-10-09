@@ -20,16 +20,18 @@
           <image-drop ref="imgedrop" v-model="image"></image-drop>
         </div>
         <div class="mb-3">
-          <textarea
-            ref="textarea_description"
-            v-model="description"
-            class="inline-editor"
-            rows="2"
-            placeholder="Optional description of the project (click here to edit)"
-          ></textarea>
-          <small class="red" v-if="errors.includes('req_desc')"
-            >Description is required</small
-          >
+          <hash-autocomplete>
+            <textarea
+              ref="textarea_description"
+              v-model="description"
+              class="inline-editor"
+              rows="2"
+              placeholder="Optional description of the project (click here to edit)"
+            ></textarea>
+            <small class="red" v-if="errors.includes('req_desc')"
+              >Description is required</small
+            >
+          </hash-autocomplete>
         </div>
         <div class="mb-3">
           <link-editor v-model="links"></link-editor>
@@ -71,6 +73,7 @@ import LinkEditor from "../components/LinkEditor.vue";
 import CoordinateSelector from "../components/CoordinateSelector.vue";
 import App from "../components/App.vue";
 import ModalDialog from "../components/ModalDialog.vue";
+import HashAutocomplete from "../components/HashAutocomplete.vue";
 
 @Options({
   components: {
@@ -79,6 +82,7 @@ import ModalDialog from "../components/ModalDialog.vue";
     LinkEditor,
     CoordinateSelector,
     ModalDialog,
+    HashAutocomplete,
   },
 })
 export default class ProjectEditorPage extends Vue {

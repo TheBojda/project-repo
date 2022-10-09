@@ -103,4 +103,14 @@ body {
   height: 100%;
   min-height: 100%;
 }
+
+.mention-item {
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.mention-selected {
+  background: #cccccc;
+}
 </style>

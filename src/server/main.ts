@@ -5,7 +5,7 @@ import { parse } from 'node-html-parser';
 import { createSSRApp } from 'vue';
 import { renderToString } from 'vue/server-renderer'
 
-import { getProjectDataBySlug } from './services/db_service'
+import { getProjectDataBySlug, getHashtags } from './services/db_service'
 import api from './api'
 
 import App from '../components/App.vue'
@@ -60,6 +60,10 @@ app.get('/project/:slug/json', async (req: Request, res: Response) => {
     res.send(projectData)
 });
 
+app.get('/hashtags', async (req: Request, res: Response) => {
+    const hashtags = await getHashtags()
+    res.send(hashtags)
+})
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

@@ -17,16 +17,18 @@
           Let's change the world together...
         </h4>
         <div style="height: 1rem"></div>
-        <div class="input-group search-input">
-          <input
-            v-model="searchExpression"
-            type="text"
-            class="form-control"
-            placeholder="Search our repository for world-changing projects"
-            @keypress.enter="search"
-          />
-          <button class="btn btn-primary" @click="search">Search</button>
-        </div>
+        <hash-autocomplete>
+          <div class="input-group search-input">
+            <input
+              v-model="searchExpression"
+              type="text"
+              class="form-control"
+              placeholder="Search our repository for world-changing projects"
+              @keypress.enter="search"
+            />
+            <button class="btn btn-primary" @click="search">Search</button>
+          </div>
+        </hash-autocomplete>
         <div class="text-end">
           <small v-if="optionsVisible"
             ><a href="#" @click.prevent="optionsVisible = false"
@@ -89,9 +91,10 @@ import { callApi } from "../utils/api_utils";
 
 import CategorySelector from "../components/CategorySelector.vue";
 import CoordinateSelector from "../components/CoordinateSelector.vue";
+import HashAutocomplete from "../components/HashAutocomplete.vue";
 
 @Options({
-  components: { CategorySelector, CoordinateSelector },
+  components: { CategorySelector, CoordinateSelector, HashAutocomplete },
 })
 export default class SearchPage extends Vue {
   public optionsVisible = true;
@@ -101,6 +104,7 @@ export default class SearchPage extends Vue {
   public errors: string[] = [];
   public projects: any[] = [];
   public nextOffset = 0;
+  public hashtags: string[] = [];
 
   private offset = 0;
 
