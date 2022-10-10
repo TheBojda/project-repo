@@ -32,10 +32,21 @@ if (process.env.DEV_MODE)
 
 app.use('/api', api)
 
+function truncate(str: string, n: number) {
+    return str.length > n ? str.slice(0, n - 1) + "..." : str;
+}
+
 async function renderContent(req: Request, res: Response, context: any) {
     const app = createSSRApp(App);
     const app_content = await renderToString(app, { path: req.originalUrl, ...context })
     index_template_ssr.querySelector('#app')?.set_content(app_content);
+    index_template_ssr.querySelector('title')?.set_content(context.content.title);
+    index_template_ssr.querySelector('meta[name="description"]')?.setAttribute('value', truncate(context.content.description.replace(/\s/g, ' '), 160));
+    index_template_ssr.querySelector('meta[name="og:title"]')?.setAttribute('value', context.content.title);
+    index_template_ssr.querySelector('meta[name="og:url"]')?.setAttribute('value', `${req.protocol}://${req.hostname}${req.originalUrl}`);
+    index_template_ssr.querySelector('meta[name="og:description"]')?.setAttribute('value', truncate(context.content.description.replace(/\s/g, ' '), 300));
+    index_template_ssr.querySelector('meta[name="og:image"]')?.setAttribute('value', context.content.image ?  `${req.protocol}://${req.hostname}${context.content.image}` : '');
+
     res.send(index_template_ssr.toString())
 }
 
