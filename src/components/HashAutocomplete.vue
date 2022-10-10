@@ -5,11 +5,11 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue } from "vue-facing-decorator";
 
 import { Mentionable } from "vue-mention";
 
-@Options({ components: { Mentionable } })
+@Component({ components: { Mentionable } })
 export default class HashAutocomplete extends Vue {
   public hashtags: any[] = [];
 

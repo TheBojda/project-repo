@@ -54,7 +54,7 @@
                     </small>
                   </div>
                 </div>
-                <div ref="map" style="width: 100%; height: 80%"></div>
+                <div ref="mapDiv" style="width: 100%; height: 80%"></div>
               </div>
             </div>
           </div>
@@ -65,12 +65,12 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue, Prop, Emit, Ref } from "vue-facing-decorator";
 import convert from "geo-coordinates-parser";
 
 import config from "../config.json";
 
-@Options({ props: ["modelValue"] })
+@Component
 export default class CoordinateSelector extends Vue {
   private marker: any;
   private map: any;
@@ -78,9 +78,15 @@ export default class CoordinateSelector extends Vue {
   public coords: any = {};
   public jumpto_coords = "";
 
+  @Prop
+  public modelValue: any = {};
+
+  @Ref
+  readonly mapDiv!: HTMLDivElement;
+
   mounted() {
     const L = require("leaflet");
-    this.map = L.map(this.$refs.map).setView([51.505, -0.09], 13);
+    this.map = L.map(this.mapDiv).setView([51.505, -0.09], 13);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -88,7 +94,7 @@ export default class CoordinateSelector extends Vue {
     const resizeObserver = new ResizeObserver(() => {
       this.map.invalidateSize();
     });
-    resizeObserver.observe(this.$refs.map as Element);
+    resizeObserver.observe(this.mapDiv as Element);
 
     this.map.on("click", (e) => {
       let latlng = e.latlng;
@@ -123,11 +129,12 @@ export default class CoordinateSelector extends Vue {
     );
   }
 
+  @Emit("update:modelValue")
   clearPosition() {
     this.map.removeLayer(this.marker);
     this.marker = undefined;
     this.coords = {};
-    this.$emit("update:modelValue", this.coords);
+    return this.coords;
   }
 
   async jumpto() {

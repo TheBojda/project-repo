@@ -6,7 +6,7 @@
     <div class="container">
       <a class="navbar-brand" href="/">ENVIENTA Search</a>
     </div>
-    <div class="collapse navbar-collapse" ref="navbar">
+    <div class="collapse navbar-collapse" ref="navbarDiv">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
           <a class="nav-link" href="#"> How it works? </a>
@@ -52,19 +52,21 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue, Ref, Emit } from "vue-facing-decorator";
 import { User } from "firebase/auth";
-import { Collapse, Dropdown } from "bootstrap";
+import { Collapse } from "bootstrap";
 import * as md5 from "md5";
 
-@Options({})
+@Component
 export default class TopNavigation extends Vue {
   public userPhotoURL = "";
   public userLinkURL = "";
   public userMenuShown = false;
 
   private navbar?: Collapse;
-  //private userMenu?: Dropdown;
+
+  @Ref
+  readonly navbarDiv!: HTMLDivElement;
 
   setUser(user: User | any) {
     if (user) {
@@ -78,10 +80,9 @@ export default class TopNavigation extends Vue {
 
   mounted() {
     const bootstrap = require("bootstrap");
-    this.navbar = new bootstrap.Collapse(this.$refs.navbar as Element, {
+    this.navbar = new bootstrap.Collapse(this.navbarDiv, {
       toggle: false,
     });
-    // this.userMenu = new bootstrap.Dropdown(this.$refs.userMenu as Element);
   }
 
   toggleNavbar() {
@@ -89,17 +90,14 @@ export default class TopNavigation extends Vue {
   }
 
   toggleUserMenu() {
-    // this.userMenu?.toggle();
     this.userMenuShown = !this.userMenuShown;
   }
 
-  showLoginModal() {
-    this.$emit("showLoginModal");
-  }
+  @Emit("showLoginModal")
+  showLoginModal() {}
 
-  logout() {
-    this.$emit("logout");
-  }
+  @Emit("logout")
+  logout() {}
 }
 </script>
 

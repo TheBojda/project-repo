@@ -6,12 +6,15 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue, Ref } from "vue-facing-decorator";
 import ModalDialog from "./ModalDialog.vue";
 import { EmailAuthProvider, GoogleAuthProvider, Auth } from "firebase/auth";
 
-@Options({ components: { ModalDialog } })
+@Component({ components: { ModalDialog } })
 export default class LoginModal extends Vue {
+  @Ref
+  private modal!: ModalDialog;
+
   init(firebaseAuth: Auth) {
     const firebaseui = require("firebaseui");
     let ui = new firebaseui.auth.AuthUI(firebaseAuth);
@@ -30,7 +33,7 @@ export default class LoginModal extends Vue {
   }
 
   show() {
-    (this.$refs.modal as ModalDialog).show();
+    this.modal.show();
   }
 }
 </script>

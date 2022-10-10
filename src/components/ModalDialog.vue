@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" tabindex="-1" ref="modal">
+  <div class="modal" tabindex="-1" ref="modalDiv">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -20,16 +20,19 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue, Ref } from "vue-facing-decorator";
 import { Modal } from "bootstrap";
 
-@Options({})
+@Component
 export default class ModalDialog extends Vue {
   private modal?: Modal;
 
+  @Ref
+  readonly modalDiv!: HTMLDivElement;
+
   mounted() {
     const bootstrap = require("bootstrap");
-    this.modal = new bootstrap.Modal(this.$refs.modal as Element);
+    this.modal = new bootstrap.Modal(this.modalDiv);
   }
 
   show() {

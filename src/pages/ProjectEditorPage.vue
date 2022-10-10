@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue } from 'vue-facing-decorator'
 
 import { callApi } from "../utils/api_utils";
 
@@ -75,7 +75,7 @@ import App from "../components/App.vue";
 import ModalDialog from "../components/ModalDialog.vue";
 import HashAutocomplete from "../components/HashAutocomplete.vue";
 
-@Options({
+@Component({
   components: {
     CategorySelector,
     ImageDrop,

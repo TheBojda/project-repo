@@ -19,9 +19,7 @@
             data-bs-target="#categoryCollapse"
             aria-expanded="false"
           >
-            <strong v-if="!selectedCategory"
-              >Choose a category.</strong
-            >
+            <strong v-if="!selectedCategory">Choose a category.</strong>
             &nbsp; To select category, click here!
           </button>
         </div>
@@ -54,39 +52,39 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue, Prop, Watch, Emit } from "vue-facing-decorator";
 
-@Options({ props: ["modelValue"] })
+@Component
 export default class CategorySelector extends Vue {
   public categories = {};
   public selectedCategory: string = "";
 
-  created() {
-    this.$watch(
-      "modelValue",
-      (val) => {
-        this.selectedCategory = val ? val : "";
-      },
-      { immediate: true }
-    );
-  }
+  @Prop
+  public modelValue: string = "";
 
   mounted() {
     this.init();
+  }
+
+  @Watch("modelValue", { immediate: true })
+  modelValueWatcher(val: string) {
+    this.selectedCategory = val ? val : "";
   }
 
   async init() {
     this.categories = await (await fetch("config/categories.json")).json();
   }
 
+  @Emit("update:modelValue")
   selectCategory(key) {
     this.selectedCategory = key;
-    this.$emit("update:modelValue", this.selectedCategory);
+    return this.selectedCategory;
   }
 
+  @Emit("update:modelValue")
   removeCategory(key) {
     this.selectedCategory = "";
-    this.$emit("update:modelValue", this.selectedCategory);
+    return this.selectedCategory;
   }
 }
 </script>

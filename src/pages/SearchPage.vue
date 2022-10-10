@@ -85,7 +85,7 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue } from 'vue-facing-decorator'
 
 import { callApi } from "../utils/api_utils";
 
@@ -93,7 +93,7 @@ import CategorySelector from "../components/CategorySelector.vue";
 import CoordinateSelector from "../components/CoordinateSelector.vue";
 import HashAutocomplete from "../components/HashAutocomplete.vue";
 
-@Options({
+@Component({
   components: { CategorySelector, CoordinateSelector, HashAutocomplete },
 })
 export default class SearchPage extends Vue {

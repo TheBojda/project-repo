@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue, Prop, Watch, Emit } from "vue-facing-decorator";
 
 import { getIcon } from "../utils/link_utils";
 
@@ -50,22 +50,21 @@ class Link {
   public description = "";
 }
 
-@Options({ props: ["modelValue"] })
+@Component
 export default class LinkEditor extends Vue {
   public url = "";
   public description = "";
   public links = [] as Link[];
 
-  created() {
-    this.$watch(
-      "modelValue",
-      (val) => {
-        this.links = val ? val : [];
-      },
-      { immediate: true }
-    );
+  @Prop
+  public modelValue = [];
+
+  @Watch("modelValue", { immediate: true })
+  modelValueWatcher(val) {
+    this.links = val ? val : [];
   }
-  
+
+  @Emit("update:modelValue")
   addLink() {
     let link = new Link();
     link.url = this.url;
@@ -73,12 +72,13 @@ export default class LinkEditor extends Vue {
     this.links.push(link);
     this.url = "";
     this.description = "";
-    this.$emit("update:modelValue", this.links);
+    return this.links;
   }
 
+  @Emit("update:modelValue")
   removeLink(idx) {
     this.links.splice(idx, 1);
-    this.$emit("update:modelValue", this.links);
+    return this.links;
   }
 
   getIcon(url) {

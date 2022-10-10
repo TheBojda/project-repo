@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue, Prop, Watch } from "vue-facing-decorator";
 
 import { uploadImage } from "../utils/api_utils";
 
@@ -23,21 +23,14 @@ function preventDefaults(e) {
   e.preventDefault();
 }
 
-@Options({ props: ["modelValue"] })
+@Component
 export default class ImageDrop extends Vue {
   public previewSrc = "";
 
   private file: any;
 
-  created() {
-    this.$watch(
-      "modelValue",
-      (val) => {
-        this.previewSrc = val;
-      },
-      { immediate: true }
-    );
-  }
+  @Prop
+  public modelValue = "";
 
   mounted() {
     events.forEach((eventName) => {
@@ -49,6 +42,11 @@ export default class ImageDrop extends Vue {
     events.forEach((eventName) => {
       document.body.removeEventListener(eventName, preventDefaults);
     });
+  }
+
+  @Watch("modelValue", { immediate: true })
+  modelValueWatcher(val) {
+    this.previewSrc = val;
   }
 
   onDrop(e) {

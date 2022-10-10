@@ -110,13 +110,13 @@
 
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue } from 'vue-facing-decorator'
 
 import { callApi } from "../utils/api_utils";
 
 import App from "../components/App.vue";
 
-@Options({})
+@Component
 export default class DraftsPage extends Vue {
   public drafts: any[] = [];
   public projects: any[] = [];

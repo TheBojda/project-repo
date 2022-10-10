@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue, Ref } from "vue-facing-decorator";
 import { useSSRContext } from "vue";
 import { initializeApp } from "firebase/app";
 import { getAuth, User, Unsubscribe } from "firebase/auth";
@@ -27,7 +27,7 @@ import DraftsPage from "../pages/DraftsPage.vue";
 import LoginModal from "./LoginModal.vue";
 import TopNavigation from "./TopNavigation.vue";
 
-@Options({
+@Component({
   components: {
     SearchPage,
     ProjectPage,
@@ -40,8 +40,11 @@ import TopNavigation from "./TopNavigation.vue";
 export default class App extends Vue {
   public path = "";
 
-  private loginModal?: LoginModal;
-  private topNavigation?: TopNavigation;
+  @Ref
+  private loginModal!: LoginModal;
+
+  @Ref
+  private topNavigation!: TopNavigation;
 
   created() {
     if (!isBrowser()) {
@@ -53,16 +56,13 @@ export default class App extends Vue {
   }
 
   mounted() {
-    this.loginModal = this.$refs.loginModal as LoginModal;
-    this.topNavigation = this.$refs.topNavigation as TopNavigation;
-
     const firebaseAuth = getAuth(initializeApp(config.firebaseConfig));
     this.loginModal.init(firebaseAuth);
     firebaseAuth.onAuthStateChanged(async (user) => {
       if (user) {
-        this.topNavigation?.setUser(user);
+        this.topNavigation.setUser(user);
       } else {
-        this.topNavigation?.setUser(null);
+        this.topNavigation.setUser(null);
       }
     });
   }

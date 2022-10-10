@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { Component, Vue } from 'vue-facing-decorator'
 import { useSSRContext } from "vue";
 import md5 from "md5";
 
@@ -81,7 +81,7 @@ import { getIcon } from "../utils/link_utils";
 import App from "../components/App.vue";
 import LeafletMap from "../components/LeafletMap.vue";
 
-@Options({
+@Component({
   components: { LeafletMap },
 })
 export default class ProjectPage extends Vue {
