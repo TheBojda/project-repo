@@ -1,16 +1,12 @@
 import express, { Express, Request, Response } from 'express';
-import * as fs from 'fs';
 import * as path from 'path';
 import { createSSRApp } from 'vue';
 import { renderToString } from 'vue/server-renderer'
-
 import { getProjectDataBySlug, getHashtags } from './services/db_service'
 import api from './api'
-
 import App from '../components/App.vue'
-
 import { init_env } from '../utils/env_utils'
-import { title } from 'process';
+
 init_env()
 
 const app: Express = express();

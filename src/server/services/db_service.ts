@@ -93,7 +93,7 @@ export async function createProject(slug: string, content: string, email_hash: s
 }
 
 export async function updateProject(slug: string, content: string, email_hash: string, description: string, category: string, position: { lat: number, lng: number }) {
-    await runQuery('UPDATE projects SET content=?, description=?, category=?, position=Point(?,?) WHERE slug=? AND email_hash=?', [content, description, category, position.lng, position.lat, slug, email_hash])
+    await runQuery('UPDATE projects SET changeset=NULL, content=?, description=?, category=?, position=Point(?,?) WHERE slug=? AND email_hash=?', [content, description, category, position.lng, position.lat, slug, email_hash])
 }
 
 export async function createDraftForProject(slug: string, email: string) {
@@ -144,6 +144,20 @@ export async function collectHashtags(content: string) {
 export async function getHashtags() {
     let rows
     [rows] = await runQuery("SELECT hashtag FROM hashtags");
+    let result: any[] = [];
+    for (const row of rows) {
+        result.push({ value: row.hashtag, label: row.hashtag })
+    }
+    return result
+}
+
+export async function getMaxChangeset() {
+    const [rows] = await runQuery("SELECT MAX(changeset) as max_changeset FROM projects")
+    return rows[0].max_changeset
+}
+
+export async function getChangeset(n:number) {
+    const [rows] = await runQuery("SELECT slug, content, email_hash FROM projects WHERE changeset=?", [n])
     let result: any[] = [];
     for (const row of rows) {
         result.push({ value: row.hashtag, label: row.hashtag })

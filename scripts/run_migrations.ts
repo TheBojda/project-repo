@@ -1,8 +1,8 @@
 import { createConnection } from 'mysql2/promise';
 import fs from 'fs';
 import * as path from 'path';
-
 import * as dotenv from 'dotenv'
+
 if (process.env.DEV_MODE)
     dotenv.config({ override: true, path: "env.development" })
 
@@ -19,7 +19,8 @@ const main = async () => {
     const files = fs.readdirSync(path.join(process.cwd(), './database/migrations'))
     files.sort()
     for (const file of files) {
-        const [rows, _] = await connection.execute("SELECT migration FROM migrations WHERE migration = ?", [file])
+        let rows
+        [rows] = await connection.execute("SELECT migration FROM migrations WHERE migration = ?", [file])
         if (rows.length == 0) {
             console.log(`Running migration: ${file}`);
             const content = fs.readFileSync(path.join(process.cwd(), `./database/migrations/${file}`), 'utf-8').toString()

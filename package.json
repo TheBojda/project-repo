@@ -18,8 +18,10 @@
   "scripts": {
     "mysql:start": "docker run -p 3306:3306 --rm --name project-repo-mysql -e MYSQL_ROOT_PASSWORD=12345 -e MYSQL_DATABASE=project_repo -e MYSQL_USER=project_repo -e MYSQL_PASSWORD=12345 -v project_repo_mysql_data:/var/lib/mysql -d mysql:5.7",
     "mysql:stop": "docker stop project-repo-mysql",
-    "migrations:run": "node database/run_migrations.mjs",
-    "migrations:run_dev": "DEV_MODE=true node database/run_migrations.mjs",
+    "migrations:run": "ts-node scripts/run_migrations.ts",
+    "migrations:run_dev": "DEV_MODE=true ts-node scripts/run_migrations.ts",
+    "changeset:new": "ts-node scripts/create_new_changeset.ts",
+    "changeset:new_dev": "DEV_MODE=true ts-node scripts/create_new_changeset.ts",
     "watch": "parcel watch",
     "build": "parcel build",
     "dev": "concurrently --kill-others \"npm run watch\" \"DEV_MODE=true nodemon ./dist/server/main.js\""
@@ -29,10 +31,14 @@
   "license": "GPL-3.0",
   "devDependencies": {
     "@parcel/transformer-vue": "^2.7.0",
+    "@types/md5": "^2.3.2",
+    "@types/multer": "^1.4.7",
+    "@types/sharp": "^0.31.0",
     "concurrently": "^7.3.0",
     "nodemon": "^2.0.19",
     "parcel": "^2.7.0",
     "process": "^0.11.10",
+    "ts-node": "^10.9.1",
     "typescript": "^4.8.2",
     "vue-template-compiler": "^2.7.10"
   },
