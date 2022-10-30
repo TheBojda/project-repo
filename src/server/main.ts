@@ -2,12 +2,13 @@ import express, { Express, Request, Response } from 'express';
 import * as path from 'path';
 import { createSSRApp } from 'vue';
 import { renderToString } from 'vue/server-renderer'
-import { getProjectDataBySlug, getHashtags } from './services/db_service'
-import api from './api'
-import App from '../components/App.vue'
-import { init_env } from '../utils/env_utils'
 
-init_env()
+import { getHashtags } from './services/search_service'
+import { getProjectDataBySlug } from './services/project_service'
+import { api } from './api'
+import App from '../components/App.vue'
+
+import '../utils/env_utils'
 
 const app: Express = express();
 const port = 3000;
