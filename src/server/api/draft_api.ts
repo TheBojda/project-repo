@@ -3,12 +3,18 @@ import md5 from 'md5';
 import slugify from 'slugify'
 
 import { jsonParser, verify_captcha, auth } from '../../utils/server_utils';
+import { renderTemplate } from '../../utils/template_utils';
 import { updateDraft, createDraft, getDrafts, getDraftIdBySlug, createDraftForProject, getDraft, setDraftState, deleteDraftById } from '../services/draft_service'
 import { updateProject, createProject } from '../services/project_service'
 import { getUserRole } from '../services/user_service'
 import { collectHashtags } from '../services/search_service'
+import { sendEmail } from '../services/email_service'
 
 export const dratfAPI = Router();
+
+dratfAPI.get('/testTemplate', async (req: Request, res: Response) => {
+    res.send(await renderTemplate('submit_draft'))
+})
 
 dratfAPI.post('/submitDraft', jsonParser, verify_captcha, auth, async (req: Request, res: Response) => {
     const user = req.body.currentUser
@@ -17,6 +23,7 @@ dratfAPI.post('/submitDraft', jsonParser, verify_captcha, auth, async (req: Requ
     } else {
         await createDraft(JSON.stringify(req.body.content), user.email)
     }
+    sendEmail('info@envienta.org', 'thebojda@gmail.com', 'New draft', await renderTemplate('submit_draft'))
     res.send({ success: true })
 })
 

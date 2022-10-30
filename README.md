@@ -3,6 +3,7 @@ Project repo
 
 ## Preparing the development environment
 
+- Run `yarn` to install dependencies
 - Run `yarn mysql:start` to start the development MySQL server
 - Run `yarn migrations:run_dev` to build or actualize the database
 - Run `yarn build` to build the project
