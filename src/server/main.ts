@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import * as path from 'path';
 import { createSSRApp } from 'vue';
 import { renderToString } from 'vue/server-renderer'
+import cors from 'cors';
 
 import { getHashtags } from './services/search_service'
 import { getProjectDataBySlug } from './services/project_service'
@@ -12,6 +13,8 @@ import '../utils/env_utils'
 
 const app: Express = express();
 const port = 3000;
+
+app.use(cors({ origin: process.env.BASE_URL }))
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../../views"));
