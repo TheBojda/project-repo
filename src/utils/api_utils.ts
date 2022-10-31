@@ -1,6 +1,8 @@
+import config from '../config.json'
+
 export async function callApi(url: string, payload: any) {
     return await (
-        await fetch(url, {
+        await fetch(config.api_url + url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -17,7 +19,7 @@ export async function uploadImage(file, userToken: string, captchaToken: string)
     body.append('captchaToken', captchaToken)
 
     return await (
-        await fetch('/api/uploadImage', {
+        await fetch(config.api_url + '/api/uploadImage', {
             method: "POST",
             body: body,
         })

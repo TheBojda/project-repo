@@ -3,7 +3,7 @@
     <div style="padding-top: 7rem" class="d-none d-lg-block"></div>
     <div class="row justify-content-md-center">
       <div class="col-lg-8">
-        <h1 class="text-center">ENVIENTA Search</h1>
+        <h1 class="text-center">ENVIENTA Knowledge Base</h1>
         <div style="height: 1rem"></div>
         <h4>
           The
@@ -12,7 +12,7 @@
             target="_blank"
             >Cosmo-Local</a
           >
-          search engine. <a href="/project_editor">Register</a> your project or
+          knowledge base. <a href="/project_editor">Register</a> your project or
           local community on our site to make it visible to the whole world.
           Let's change the world together...
         </h4>
